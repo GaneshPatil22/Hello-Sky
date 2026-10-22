@@ -59,7 +59,7 @@ Switching weather source or adding caching must not change a single screen. The 
 
 **Latest iOS only.** Minimum is iOS 27, matching `IPHONEOS_DEPLOYMENT_TARGET`. This is deliberate: `RealityView`, `MeshGradient`, `Tab`, `glassEffect`, and on-device AI captions are all available unconditionally. Do not add `if #available` checks or fallback paths for older systems — one code path is the point.
 
-**Quality tiers.** The globe and sky pick high/medium/low automatically and drop texture size, the cloud layer, and glow when the frame rate falls. The baseline is the oldest iPhone that runs iOS 27 — confirm which model that is before Phase 5.
+**Quality tiers.** The globe and sky pick high/medium/low automatically and drop texture size, the cloud layer, and glow when the frame rate falls. The baseline device is an **iPhone 12 Pro on iOS 27**, which is available for physical testing. Profile there, not only in the simulator.
 
 ## Coding practices
 
