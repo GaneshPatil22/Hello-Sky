@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "SkyCore",
-    platforms: [.iOS(.v27)],
+    platforms: [.iOS(.v27), .macOS(.v26)],
     products: [
         .library(name: "SkyCore", targets: ["SkyCore"])
     ],

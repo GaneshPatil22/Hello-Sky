@@ -12,6 +12,6 @@ public enum GlobeModule {
 
     /// Confirms this module links against `SkyCore` and `SkyUI`. Removed in Phase 5.
     public static func canReachDependencies() -> Bool {
-        referencePoint.isValid && SkyUIModule.canReachDependencies()
+        referencePoint.isValid && !ThemeRegistry.standard.themes.isEmpty
     }
 }

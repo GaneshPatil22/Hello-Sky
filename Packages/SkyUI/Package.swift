@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "SkyUI",
-    platforms: [.iOS(.v27)],
+    platforms: [.iOS(.v27), .macOS(.v26)],
     products: [
         .library(name: "SkyUI", targets: ["SkyUI"])
     ],

@@ -11,7 +11,7 @@ Open a globe with your people on it. Tap one, and the whole screen becomes their
 ![Device](https://img.shields.io/badge/device-iPhone-lightgrey)
 ![Status](https://img.shields.io/badge/status-Phase%200%20in%20progress-yellow)
 
-> **Status:** early development, Phase 0. The module structure is in place and tested; no features are implemented yet.
+> **Status:** early development, Phase 0 nearly complete. The module structure, look system, and widget scaffold are in place and tested; no features are implemented yet.
 > See [PROGRESS.md](PROGRESS.md) for the live phase-by-phase tracker.
 
 ---
@@ -39,7 +39,7 @@ Eight feature groups ship in v1. All of them work with no account, no server, an
 | 🌅 | **My sky** | The same screen for your own location or a typed city, with golden hour, blue hour, and moon phase | Not started |
 | 📱 | **Widgets** | Small, medium, and Lock Screen widgets showing a person's time over their real sky | Not started |
 | 🔔 | **Alerts** | Optional per-person sunrise and sunset notifications, computed on the device | Not started |
-| 🎨 | **Looks** | Three visual themes — Realistic, Dusk, and Ink — each with its own alternate app icon | Not started |
+| 🎨 | **Looks** | Three visual themes — Realistic, Dusk, and Ink — each with its own alternate app icon | Theme data in place |
 | 🔒 | **Privacy** | No accounts, no ads, no analytics SDKs; your people list never leaves the device | By design |
 
 ### Deliberately not in v1

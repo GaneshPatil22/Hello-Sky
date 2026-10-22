@@ -4,10 +4,10 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 0 — Foundation
 **Last updated:** 2026-10-22
-**Overall:** 0 of 9 phases complete · roughly 7 of 248–332 hours
+**Overall:** 0 of 9 phases complete · roughly 11 of 248–332 hours
 
 ```
-Phase 0  ███████░░░  in progress
+Phase 0  █████████░  in progress
 Phase 1  ░░░░░░░░░░  not started
 Phase 2  ░░░░░░░░░░  not started
 Phase 3  ░░░░░░░░░░  not started
@@ -22,12 +22,12 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 0 foundation — the four local packages build, test, and link into the app. The theme system, fixtures, and widget extension are not built yet.
+**Working on:** Phase 0 foundation — everything except the device install is done. The theme system, fixtures, and widget extension are all in and tested.
 
 **Next three things:**
-1. Build the `Theme` type and `ThemeRegistry` in `SkyUI`, holding the three looks as data.
-2. Add the fixtures folder with the demo's dummy people.
-3. Add the empty widget extension target.
+1. Install on the iPhone 12 Pro with a free Apple ID, which closes Phase 0. *(Needs the device; the simulator cannot prove signing.)*
+2. Start Phase 1: port `sunState`, `sunPos`, and `julian` from the web demo into `SkyCore`.
+3. Generate sunrise and sunset fixtures from `astral` for the eight fixture cities.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -46,9 +46,9 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] A test target in each package
 - [x] Packages linked into the app target
 - [x] `make test` runs every package's tests and builds the app
-- [ ] Empty widget extension target
-- [ ] `Theme` type and `ThemeRegistry` holding the three looks
-- [ ] Fixtures folder with the demo's seven dummy people
+- [x] Empty widget extension target
+- [x] `Theme` type and `ThemeRegistry` holding the three looks
+- [x] Fixtures folder with the demo's seven dummy people, plus a half-hour zone
 - [ ] Verify: app installs on the iPhone 12 Pro with a free Apple ID
 
 **Done when:** a fresh clone builds and passes all tests with one command, and a test look added only through the registry appears in the look picker.
@@ -203,4 +203,7 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | Packages declare `.macOS(.v26)` alongside `.iOS(.v27)` so `swift test` runs on the host; the shipping app stays iPhone-only |
+| 2026-10-22 | `Theme.name` is a `LocalizedStringResource`; the String Catalog it resolves against arrives in Phase 8 |
+| 2026-10-22 | The widget keeps closure-based `TimelineProvider`; Phase 7 moves to `AppIntentTimelineProvider` for person selection |
 | 2026-10-22 | The web demo is a logic and behaviour reference only — its UI is never copied; the app is designed natively against the HIG and Liquid Glass |

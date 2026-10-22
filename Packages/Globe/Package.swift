@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "Globe",
-    platforms: [.iOS(.v27)],
+    platforms: [.iOS(.v27), .macOS(.v26)],
     products: [
         .library(name: "Globe", targets: ["Globe"])
     ],

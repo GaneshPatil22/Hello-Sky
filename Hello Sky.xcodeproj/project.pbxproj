@@ -11,10 +11,14 @@
 		000000000000000400000002 /* SkyData in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000002 /* SkyData */; };
 		000000000000000400000003 /* SkyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000003 /* SkyUI */; };
 		000000000000000400000004 /* Globe in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000004 /* Globe */; };
+		000000000000000500000021 /* SkyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000500000011 /* SkyCore */; };
+		000000000000000500000022 /* SkyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000500000012 /* SkyUI */; };
+		000000000000000050000001 /* HelloSkyWidgets.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 000000000000000000000121 /* HelloSkyWidgets.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Hello Sky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hello Sky.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		000000000000000000000121 /* HelloSkyWidgets.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = HelloSkyWidgets.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -23,7 +27,35 @@
 			path = "Hello Sky";
 			sourceTree = "<group>";
 		};
+		000000000000000000000011 /* HelloSkyWidgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HelloSkyWidgets;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		000000000000000150000000 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				000000000000000050000001 /* HelloSkyWidgets.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXContainerItemProxy section */
+		000000000000000270000000 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 000000000000000000000000 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 000000000000000200000000;
+			remoteInfo = HelloSkyWidgets;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		000000000000000130000000 /* Frameworks */ = {
@@ -33,6 +65,13 @@
 				000000000000000400000002 /* SkyData in Frameworks */,
 				000000000000000400000003 /* SkyUI in Frameworks */,
 				000000000000000400000004 /* Globe in Frameworks */,
+			);
+		};
+		000000000000000230000000 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			files = (
+				000000000000000500000021 /* SkyCore in Frameworks */,
+				000000000000000500000022 /* SkyUI in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -50,6 +89,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000120 /* Hello Sky.app */,
+				000000000000000000000121 /* HelloSkyWidgets.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -64,8 +104,12 @@
 				000000000000000120000000 /* Sources */,
 				000000000000000130000000 /* Frameworks */,
 				000000000000000140000000 /* Resources */,
+				000000000000000150000000 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
+			);
+			dependencies = (
+				000000000000000260000000 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				000000000000000000000010 /* Hello Sky */,
@@ -81,6 +125,30 @@
 			productReference = 000000000000000000000120 /* Hello Sky.app */;
 			productType = "com.apple.product-type.application";
 		};
+		000000000000000200000000 /* HelloSkyWidgets */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 000000000000000210000000 /* Build configuration list for PBXNativeTarget "HelloSkyWidgets" */;
+			buildPhases = (
+				000000000000000220000000 /* Sources */,
+				000000000000000230000000 /* Frameworks */,
+				000000000000000240000000 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				000000000000000000000011 /* HelloSkyWidgets */,
+			);
+			name = HelloSkyWidgets;
+			packageProductDependencies = (
+				000000000000000500000011 /* SkyCore */,
+				000000000000000500000012 /* SkyUI */,
+			);
+			productName = HelloSkyWidgets;
+			productReference = 000000000000000000000121 /* HelloSkyWidgets.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -93,6 +161,9 @@
 				TargetAttributes = {
 					000000000000000100000000 = {
 						CreatedOnToolsVersion = 26.3;
+					};
+					000000000000000200000000 = {
+						CreatedOnToolsVersion = 27.1;
 					};
 				};
 			};
@@ -117,12 +188,18 @@
 			projectRoot = "";
 			targets = (
 				000000000000000100000000 /* Hello Sky */,
+				000000000000000200000000 /* HelloSkyWidgets */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		000000000000000140000000 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			files = (
+			);
+		};
+		000000000000000240000000 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			files = (
 			);
@@ -135,7 +212,20 @@
 			files = (
 			);
 		};
+		000000000000000220000000 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			files = (
+			);
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		000000000000000260000000 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 000000000000000200000000 /* HelloSkyWidgets */;
+			targetProxy = 000000000000000270000000 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		000000000000000011000000 /* Debug configuration for PBXProject "Hello Sky" */ = {
@@ -334,6 +424,60 @@
 			};
 			name = Release;
 		};
+		000000000000000211000000 /* Debug configuration for PBXNativeTarget "HelloSkyWidgets" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hello Sky";
+				INFOPLIST_FILE = "Config/HelloSkyWidgets-Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).Hello-Sky.HelloSkyWidgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Debug;
+		};
+		000000000000000212000000 /* Release configuration for PBXNativeTarget "HelloSkyWidgets" */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Hello Sky";
+				INFOPLIST_FILE = "Config/HelloSkyWidgets-Info.plist";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "devplaceholder.$(PROJECT_UNIQUE_VALUE:identifier).Hello-Sky.HelloSkyWidgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 6.0;
+				TARGETED_DEVICE_FAMILY = "1";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -351,6 +495,15 @@
 				000000000000000111000000 /* Debug configuration for PBXNativeTarget "Hello Sky" */,
 				000000000000000112000000 /* Release configuration for PBXNativeTarget "Hello Sky" */,
 			);
+			defaultConfigurationName = Release;
+		};
+		000000000000000210000000 /* Build configuration list for PBXNativeTarget "HelloSkyWidgets" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				000000000000000211000000 /* Debug */,
+				000000000000000212000000 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
@@ -390,6 +543,14 @@
 		000000000000000300000004 /* Globe */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Globe;
+		};
+		000000000000000500000011 /* SkyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SkyCore;
+		};
+		000000000000000500000012 /* SkyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SkyUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

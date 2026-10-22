@@ -20,3 +20,6 @@ Packages/*/.build/
 
 # Secrets
 *.xcconfig.local
+
+# Stray compiler module cache
+-Xcc/
