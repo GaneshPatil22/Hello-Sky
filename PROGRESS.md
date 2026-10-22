@@ -4,7 +4,7 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 5 — Globe
 **Last updated:** 2026-10-22
-**Overall:** 4 of 9 phases complete · roughly 165 of 248–332 hours
+**Overall:** 4 of 9 phases complete · roughly 180 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
@@ -13,7 +13,7 @@ Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
 Phase 4  █████████░  device profiling left
 Phase 5  ███████░░░  textures left
-Phase 6  ████░░░░░░  brought forward
+Phase 6  ██████░░░░  transition in
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
 ```
@@ -25,7 +25,7 @@ Phase 8  ░░░░░░░░░░  not started
 **Working on:** the real screens, brought forward from Phase 6 after the plain stand-ins were judged too bare. The app is now a globe with your people on it, chips along the bottom, a time slider, and a full-screen sky when you tap someone. 169 tests across the four packages.
 
 **Next three things:**
-1. The signature transition: the globe should zoom to the city and dissolve into the sky, rather than the sky appearing outright.
+1. Judge the transition by hand on the device — taps cannot be driven from the command line, so its feel has not been checked by anyone yet.
 2. Earth textures, so the globe shows continents instead of a plain blue sphere.
 3. The three looks wired into the globe material, including Ink's dotted style.
 
@@ -142,9 +142,9 @@ Phase 8  ░░░░░░░░░░  not started
 
 *Target 44–56 h · the whole flow running on the real engine.*
 
-- [ ] Navigation state machine
-- [ ] The zoom-and-reveal transition (camera move plus circular mask)
-- [ ] One shared time model with offset and play
+- [x] Navigation state machine (`SkyTransition`), refusing a second tap mid-move
+- [x] The zoom-and-reveal transition (camera turn plus circular mask), with a Reduce Motion crossfade
+- [x] One shared time model with offset
 - [ ] Their sky and My sky screens
 - [ ] Share card through `ImageRenderer`
 - [ ] Add-person, looks, and settings sheets
@@ -212,6 +212,8 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | The transition is a state machine, so a second tap during a move is refused rather than leaving the globe turning towards one city while another's sky opens |
+| 2026-10-22 | Markers fade against the reveal rather than switching off when the move starts, which had left the globe bare for half a second |
 | 2026-10-22 | **Design direction changed:** the web demo's layout and density are now the reference, executed with Liquid Glass and native type rather than its stylesheet. Replaces the earlier rule that the app should never resemble the demo |
 | 2026-10-22 | The globe shader sets emissive as well as base colour: the scene carries no lights, so a lit-only colour rendered black |
 | 2026-10-22 | The render test suite is serialized; `ImageRenderer` returns nil under parallel contention, which looked like nondeterminism and was not |

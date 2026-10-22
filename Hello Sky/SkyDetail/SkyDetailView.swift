@@ -11,16 +11,20 @@ struct SkyDetailView: View {
     let person: Person
     let weather: WeatherRepository
     @Bindable var time: TimeTravel
+    /// Supplied when the sky is opened over the globe, so closing reverses the
+    /// same move rather than dismissing a sheet.
+    let onClose: (() -> Void)?
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.theme) private var theme
     @Environment(\.locale) private var locale
     @State private var model: SkyDetailModel
 
-    init(person: Person, weather: WeatherRepository, time: TimeTravel) {
+    init(person: Person, weather: WeatherRepository, time: TimeTravel, onClose: (() -> Void)? = nil) {
         self.person = person
         self.weather = weather
         self.time = time
+        self.onClose = onClose
         _model = State(wrappedValue: SkyDetailModel(place: person.place, repository: weather))
     }
 
@@ -38,8 +42,11 @@ struct SkyDetailView: View {
                     .foregroundStyle(.white.opacity(Layout.creditOpacity))
             }
             .padding(Layout.padding)
+            // The layer under this ignores the safe area so the reveal can
+            // cover the bars; the content puts its own inset back.
+            .safeAreaPadding()
         }
-        .task(id: date) { await model.load(at: date) }
+        .task(id: hourKey) { await model.load(at: date) }
         .gesture(dismissDownwards)
     }
 
@@ -49,7 +56,7 @@ struct SkyDetailView: View {
                 Text(person.name)
                     .font(.title3.weight(.medium))
                 Spacer()
-                Button("Close", systemImage: "chevron.down") { dismiss() }
+                Button("Close", systemImage: "chevron.down", action: close)
                     .labelStyle(.iconOnly)
                     .padding(Layout.closePadding)
                     .glassEffect(in: .circle)
@@ -70,11 +77,23 @@ struct SkyDetailView: View {
     private var dismissDownwards: some Gesture {
         DragGesture(minimumDistance: Layout.dismissDistance)
             .onEnded { value in
-                if value.translation.height > Layout.dismissDistance { dismiss() }
+                if value.translation.height > Layout.dismissDistance { close() }
             }
     }
 
+    private func close() {
+        if let onClose {
+            onClose()
+        } else {
+            dismiss()
+        }
+    }
+
     private var date: Date { time.date() }
+
+    /// Weather is hourly, so reloading is keyed to the hour rather than to
+    /// `date`, which changes on every frame and would restart the task forever.
+    private var hourKey: Int { Int(date.timeIntervalSince1970 / 3_600) }
 
     private var timeText: String {
         guard let timeZone = person.place.timeZone else { return "—" }

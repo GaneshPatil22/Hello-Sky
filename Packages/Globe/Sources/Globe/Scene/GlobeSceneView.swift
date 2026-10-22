@@ -5,24 +5,35 @@ import SwiftUI
 
 /// The Earth itself: a lit sphere you can spin, with no chrome on it.
 ///
-/// Markers and arcs are laid over this by the caller rather than placed in the
-/// scene, so taps and VoiceOver stay ordinary. The camera is a binding so the
-/// overlay and the sphere always agree about which way round the globe is.
+/// The camera is passed in rather than owned here, and changes are reported
+/// back. During the move to someone's sky the parent supplies an interpolated
+/// camera and ignores the reports, so the turn cannot be fought by inertia.
 public struct GlobeSceneView: View {
-    @Binding var camera: GlobeCamera
+    let camera: GlobeCamera
     let date: Date
+    /// False while a transition is driving the camera.
+    let isInteractive: Bool
+    let onCameraChange: (GlobeCamera) -> Void
 
     @State private var dragOrigin: GlobeCamera?
     @State private var lastFrame: Date = .now
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    public init(camera: Binding<GlobeCamera>, date: Date) {
-        _camera = camera
+    public init(
+        camera: GlobeCamera,
+        date: Date,
+        isInteractive: Bool = true,
+        onCameraChange: @escaping (GlobeCamera) -> Void
+    ) {
+        self.camera = camera
         self.date = date
+        self.isInteractive = isInteractive
+        self.onCameraChange = onCameraChange
     }
 
     public var body: some View {
-        TimelineView(.animation(minimumInterval: Motion.frameInterval, paused: reduceMotion)) { context in
+        TimelineView(.animation(minimumInterval: Motion.frameInterval,
+                                paused: reduceMotion || !isInteractive)) { context in
             RealityView { content in
                 content.add(makeGlobe())
             } update: { content in
@@ -32,7 +43,7 @@ public struct GlobeSceneView: View {
                 advance(to: now)
             }
         }
-        .gesture(spin)
+        .gesture(spin, isEnabled: isInteractive)
         .accessibilityLabel("Globe")
         .accessibilityHint("Drag to turn the Earth")
     }
@@ -42,23 +53,28 @@ public struct GlobeSceneView: View {
             .onChanged { value in
                 let origin = dragOrigin ?? camera
                 dragOrigin = origin
-                camera = origin
-                camera.drag(by: (
+                var moved = origin
+                moved.drag(by: (
                     longitude: -value.translation.width * Motion.degreesPerPoint,
                     latitude: value.translation.height * Motion.degreesPerPoint
                 ))
+                onCameraChange(moved)
             }
             .onEnded { value in
                 dragOrigin = nil
-                camera.release(velocity: -value.velocity.width * Motion.degreesPerPoint)
+                var released = camera
+                released.release(velocity: -value.velocity.width * Motion.degreesPerPoint)
+                onCameraChange(released)
             }
     }
 
     private func advance(to now: Date) {
         let elapsed = now.timeIntervalSince(lastFrame)
         lastFrame = now
-        guard dragOrigin == nil else { return }
-        camera.advance(by: min(elapsed, Motion.longestStep))
+        guard isInteractive, dragOrigin == nil else { return }
+        var moved = camera
+        moved.advance(by: min(elapsed, Motion.longestStep))
+        onCameraChange(moved)
     }
 
     private func makeGlobe() -> Entity {

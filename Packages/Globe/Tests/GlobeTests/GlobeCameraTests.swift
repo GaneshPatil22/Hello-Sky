@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 import Testing
 
 @testable import Globe
@@ -77,5 +78,77 @@ struct GlobeCameraTests {
         camera.advance(by: 0)
         camera.advance(by: -1)
         #expect(camera == before)
+    }
+}
+
+@Suite("Globe camera focus")
+struct GlobeCameraFocusTests {
+    @Test("Focusing on a place brings it to the centre of the screen")
+    func focusCentresThePlace() {
+        let size = CGSize(width: 400, height: 600)
+        for person in PersonFixtures.all {
+            let camera = GlobeCamera.focused(on: person.place.coordinate)
+            guard let point = GlobeProjection.screenPoint(for: person.place.coordinate,
+                                                          camera: camera, size: size) else {
+                Issue.record("\(person.place.city) was not visible after focusing on it")
+                continue
+            }
+            #expect(abs(point.x - size.width / 2) < 0.5, "\(person.place.city) x")
+            #expect(abs(point.y - size.height / 2) < 0.5, "\(person.place.city) y")
+        }
+    }
+
+    @Test("Interpolation starts where it is and ends where it was told")
+    func interpolationHitsBothEnds() {
+        let start = GlobeCamera(longitude: 10, latitude: -20)
+        let target = GlobeCamera.focused(on: PersonFixtures.kenji.place.coordinate)
+
+        let atStart = start.interpolated(towards: target, progress: 0)
+        #expect(abs(atStart.longitude - start.longitude) < 0.001)
+        #expect(abs(atStart.latitude - start.latitude) < 0.001)
+
+        let atEnd = start.interpolated(towards: target, progress: 1)
+        #expect(abs(atEnd.longitude - target.longitude) < 0.001)
+        #expect(abs(atEnd.latitude - target.latitude) < 0.001)
+    }
+
+    @Test("Longitude takes the short way round the globe")
+    func takesTheShortWay() {
+        let start = GlobeCamera(longitude: 350)
+        let target = GlobeCamera(longitude: 10)
+        let halfway = start.interpolated(towards: target, progress: 0.5)
+
+        // The short way passes through 0, not through 180.
+        #expect(halfway.longitude > 355 || halfway.longitude < 5, "went the long way to \(halfway.longitude)")
+    }
+
+    @Test("Progress outside zero and one is clamped")
+    func progressIsClamped() {
+        let start = GlobeCamera(longitude: 0)
+        let target = GlobeCamera(longitude: 90)
+        #expect(start.interpolated(towards: target, progress: -1) == start.interpolated(towards: target, progress: 0))
+        #expect(start.interpolated(towards: target, progress: 2) == start.interpolated(towards: target, progress: 1))
+    }
+
+    @Test("The move eases rather than running at a constant rate")
+    func movementEases() {
+        let start = GlobeCamera(longitude: 0)
+        let target = GlobeCamera(longitude: 100)
+
+        let early = start.interpolated(towards: target, progress: 0.1).longitude
+        let middle = start.interpolated(towards: target, progress: 0.5).longitude
+        let late = start.interpolated(towards: target, progress: 0.9).longitude
+
+        #expect(early < 10, "should start slowly, got \(early)")
+        #expect(abs(middle - 50) < 0.001, "should be halfway at halfway")
+        #expect(late > 90, "should finish slowly, got \(late)")
+    }
+
+    @Test("Focusing cancels any carried spin")
+    func focusStopsTheSpin() {
+        var start = GlobeCamera()
+        start.release(velocity: 200)
+        #expect(start.interpolated(towards: .focused(on: PersonFixtures.you.place.coordinate),
+                                   progress: 0.5).isCoasting == false)
     }
 }

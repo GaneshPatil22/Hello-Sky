@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// Where the globe is turned to, and how it keeps turning.
 ///
@@ -68,5 +69,34 @@ extension GlobeCamera {
 extension Double {
     func clamped(to range: ClosedRange<Double>) -> Double {
         min(max(self, range.lowerBound), range.upperBound)
+    }
+}
+
+extension GlobeCamera {
+    /// The angles that bring `coordinate` to the middle of the screen.
+    ///
+    /// Turning the globe so a point faces us is exactly undoing the projection:
+    /// the camera's longitude and latitude become the place's own.
+    public static func focused(on coordinate: Coordinate) -> GlobeCamera {
+        GlobeCamera(longitude: coordinate.longitude, latitude: coordinate.latitude)
+    }
+
+    /// A camera part way between this one and `target`.
+    ///
+    /// Longitude takes the short way round, so a globe turning from 350° to 10°
+    /// moves twenty degrees forward rather than three hundred and forty back.
+    public func interpolated(towards target: GlobeCamera, progress: Double) -> GlobeCamera {
+        let amount = progress.clamped(to: 0...1)
+        let eased = amount * amount * (3 - 2 * amount)
+
+        var difference = target.longitude - longitude
+        if difference > 180 { difference -= 360 }
+        if difference < -180 { difference += 360 }
+
+        return GlobeCamera(
+            longitude: longitude + difference * eased,
+            latitude: latitude + (target.latitude - latitude) * eased,
+            spin: 0
+        )
     }
 }
