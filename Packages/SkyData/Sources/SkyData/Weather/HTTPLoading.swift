@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// Fetching bytes from a URL.
 ///

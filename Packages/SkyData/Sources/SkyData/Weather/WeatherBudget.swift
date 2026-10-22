@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// How many calls a day the app allows itself.
 ///

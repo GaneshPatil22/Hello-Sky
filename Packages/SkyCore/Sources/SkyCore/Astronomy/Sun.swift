@@ -86,7 +86,8 @@ extension Sun {
 }
 
 extension Double {
-    func clamped(to range: ClosedRange<Double>) -> Double {
+    /// Public because the renderer keeps its own ratios inside 0...1 too.
+    public func clamped(to range: ClosedRange<Double>) -> Double {
         min(max(self, range.lowerBound), range.upperBound)
     }
 

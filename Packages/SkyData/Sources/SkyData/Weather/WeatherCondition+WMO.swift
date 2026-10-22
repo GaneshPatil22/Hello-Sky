@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 extension WeatherCondition {
     /// Maps a WMO weather code, which is what Open-Meteo reports.

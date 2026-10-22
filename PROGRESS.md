@@ -2,16 +2,16 @@
 
 Live tracker for Hello Sky. Updated before every commit.
 
-**Current phase:** Phase 3 — Weather layer
+**Current phase:** Phase 4 — Sky renderer
 **Last updated:** 2026-10-22
-**Overall:** 3 of 9 phases complete · roughly 81 of 248–332 hours
+**Overall:** 4 of 9 phases complete · roughly 120 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
 Phase 1  ██████████  complete
 Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
-Phase 4  ░░░░░░░░░░  not started
+Phase 4  █████████░  device profiling left
 Phase 5  ░░░░░░░░░░  not started
 Phase 6  ░░░░░░░░░░  not started
 Phase 7  ░░░░░░░░░░  not started
@@ -22,12 +22,12 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 3 is complete — weather goes through both seams, always answers, and the contract tests run against three providers including the shared-cache stub. 119 tests across the four packages.
+**Working on:** Phase 4 is built — the sky renders from place, time, weather and look as a pure function, with a gallery and a time slider to judge it by. 142 tests across the four packages.
 
 **Next three things:**
-1. Start Phase 4, the sky renderer: `SkyView`, the debug gallery, and snapshot tests.
-2. Install on the iPhone 12 Pro with a free Apple ID, the one Phase 0 item left.
-3. Add an app UI-test target when Phase 6 builds the real screens, and move the deferred "add Tokyo" check there.
+1. Look at the gallery and tune the three looks' colour tables. They are placeholders and this is the moment they want a human eye.
+2. Profile the renderer in Instruments on the iPhone 12 Pro, which closes Phase 4.
+3. Start Phase 5, the globe, opening with the RealityKit custom-material spike.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -105,14 +105,15 @@ Phase 8  ░░░░░░░░░░  not started
 
 *Target 35–45 h · a sky that is a pure function of place, time, weather, and look.*
 
-- [ ] `SkyView` with `TimelineView` and `Canvas`
-- [ ] Stars, clouds, moon with real phase, hills, rain
-- [ ] `MeshGradient` atmosphere and optional Metal glow shader
-- [ ] Seeded randomness so previews and snapshots stay stable
-- [ ] Debug gallery: times × weather × looks
-- [ ] Snapshot tests for ~12 fixed cases
-- [ ] Still-frame path for Reduce Motion
-- [ ] Frame-time profiling on the iPhone 12 Pro
+- [x] `SkyView` with `TimelineView` and `Canvas`
+- [x] Stars, clouds, moon with real phase, hills, rain
+- [x] `MeshGradient` atmosphere, with a radial sun glow placed by real azimuth
+- [x] Seeded randomness so previews and snapshots stay stable
+- [x] Debug gallery: times × weather × looks, plus a time-slider screen
+- [x] Snapshot tests for 12 fixed cases, rendered with `ImageRenderer`
+- [x] Still-frame path for Reduce Motion
+- [ ] Frame-time profiling on the iPhone 12 Pro — needs the device
+- [ ] Tune the three looks' colour tables by eye (placeholders until then)
 
 **Done when:** the gallery looks right for four cities at six times of day, and the time slider changes the sky smoothly.
 
@@ -207,6 +208,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | The weather *model* moved to `SkyCore`; providers and the repository stayed in `SkyData`, so `SkyUI` can render weather without depending on where it comes from |
+| 2026-10-22 | Seeded art uses a launch-stable FNV-1a hash, not Swift's per-process `hashValue`, so a city's stars never move between runs |
+| 2026-10-22 | Rendering is tested for determinism and distinctness rather than against golden images, which would churn while the looks are still placeholders |
 | 2026-10-22 | `SkyWeather` carries a `WeatherOrigin`, so an estimate is never shown under a weather service's attribution |
 | 2026-10-22 | An estimated reading reports no temperature rather than inventing one |
 | 2026-10-22 | The repository cannot fail: live, then cache however stale, then a clear sky — so no screen needs a weather error path |

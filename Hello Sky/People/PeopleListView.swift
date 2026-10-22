@@ -1,5 +1,6 @@
 import SkyCore
 import SkyData
+import SkyUI
 import SwiftUI
 
 /// The plain list of people, their local time, and whether to call.
@@ -44,6 +45,12 @@ struct PeopleListView: View {
                 #if DEBUG
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink("Weather", destination: WeatherDebugView(people: store.people, repository: weather))
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink("Sky", destination: SkySliderView(people: store.people))
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink("Gallery", destination: SkyGalleryView())
                 }
                 #endif
             }

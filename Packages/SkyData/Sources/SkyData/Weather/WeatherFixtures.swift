@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// Sample weather, matching the prototype's cast.
 public enum WeatherFixtures {

@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// Where readings are kept between launches.
 public protocol WeatherCaching: Sendable {

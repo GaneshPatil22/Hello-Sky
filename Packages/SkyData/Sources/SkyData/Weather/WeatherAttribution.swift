@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// The credit a source requires to be shown beside its data.
 ///

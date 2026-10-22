@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// The shape Open-Meteo returns. Never leaves this file's neighbours.
 struct OpenMeteoResponse: Decodable {

@@ -1,4 +1,5 @@
 import Foundation
+import SkyCore
 
 /// Readings kept as small files in the caches directory.
 ///
