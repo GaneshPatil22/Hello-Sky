@@ -22,7 +22,12 @@ final class AppStartup {
 
     init() {
         do {
-            state = .ready(try PeopleStore())
+            let store = try PeopleStore()
+            #if DEBUG
+            // An empty globe tells you nothing about whether the globe works.
+            try? store.seedWithFixtures()
+            #endif
+            state = .ready(store)
         } catch {
             state = .failed(error.localizedDescription)
         }

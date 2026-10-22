@@ -11,7 +11,7 @@ Open a globe with your people on it. Tap one, and the whole screen becomes their
 ![Device](https://img.shields.io/badge/device-iPhone-lightgrey)
 ![Status](https://img.shields.io/badge/status-Phase%205%20in%20progress-yellow)
 
-> **Status:** early development. The astronomy engine, weather layer, people storage and sky renderer are built and tested. The screens are still stand-ins until the globe and the signature transition arrive in Phases 5 and 6.
+> **Status:** early development, but the app now does the thing it is for: a globe with your people on it, and a tap turns the screen into their live sky. The globe has no Earth textures yet, and the signature zoom transition is still to come.
 > See [PROGRESS.md](PROGRESS.md) for the live phase-by-phase tracker.
 
 ---
@@ -33,10 +33,10 @@ Eight feature groups ship in v1. All of them work with no account, no server, an
 
 | | Feature | What it does | Status |
 |---|---|---|---|
-| 🌍 | **Globe** | Interactive 3D Earth with a live day/night line, city lights, a 24-hour time slider, and three looks | Shader and maths done; textures pending |
-| 👥 | **People** | Add up to 10 people with a name, city, and emoji avatar; editable awake hours; Good time / Maybe / Sleeping status; best-overlap window | Working, on a plain screen |
-| 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Sky renders; screen comes in Phase 6 |
-| 🌅 | **My sky** | The same screen for your own location or a typed city, with golden hour, blue hour, and moon phase | Sky renders; screen comes in Phase 6 |
+| 🌍 | **Globe** | Interactive 3D Earth with a live day/night line, city lights, a 24-hour time slider, and three looks | Working; Earth textures pending |
+| 👥 | **People** | Add up to 10 people with a name, city, and emoji avatar; editable awake hours; Good time / Maybe / Sleeping status; best-overlap window | Working |
+| 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Working; share card to come |
+| 🌅 | **My sky** | The same screen for your own location or a typed city, with golden hour, blue hour, and moon phase | Working |
 | 📱 | **Widgets** | Small, medium, and Lock Screen widgets showing a person's time over their real sky | Not started |
 | 🔔 | **Alerts** | Optional per-person sunrise and sunset notifications, computed on the device | Not started |
 | 🎨 | **Looks** | Three visual themes — Realistic, Dusk, and Ink — each with its own alternate app icon | Theme data in place |

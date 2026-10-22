@@ -4,7 +4,7 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 5 — Globe
 **Last updated:** 2026-10-22
-**Overall:** 4 of 9 phases complete · roughly 140 of 248–332 hours
+**Overall:** 4 of 9 phases complete · roughly 165 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
@@ -12,8 +12,8 @@ Phase 1  ██████████  complete
 Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
 Phase 4  █████████░  device profiling left
-Phase 5  ████░░░░░░  spike passed
-Phase 6  ░░░░░░░░░░  not started
+Phase 5  ███████░░░  textures left
+Phase 6  ████░░░░░░  brought forward
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
 ```
@@ -22,14 +22,14 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 5. The spike passed — RealityKit custom materials work on iOS, so the Metal-view fallback stays unused — and the globe's maths and interaction models are built and tested. What is left is the look: textures, markers on screen, and arcs. 169 tests across the four packages.
+**Working on:** the real screens, brought forward from Phase 6 after the plain stand-ins were judged too bare. The app is now a globe with your people on it, chips along the bottom, a time slider, and a full-screen sky when you tap someone. 169 tests across the four packages.
 
 **Next three things:**
-1. Add the Earth textures. NASA Blue Marble and Black Marble are a manual download; until they are in, the globe is an untextured lit sphere.
-2. Draw the people markers and arcs over the scene, using the projection that is already tested.
-3. Wire the three looks into the material as shader settings, including Ink's dotted style.
+1. The signature transition: the globe should zoom to the city and dissolve into the sky, rather than the sky appearing outright.
+2. Earth textures, so the globe shows continents instead of a plain blue sphere.
+3. The three looks wired into the globe material, including Ink's dotted style.
 
-**Blocked on:** the Earth textures, which have to be fetched by hand from NASA. Everything else in Phase 5 can proceed without them.
+**Blocked on:** the Earth textures, which have to be fetched by hand from NASA. Nothing else waits on them.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -212,6 +212,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | **Design direction changed:** the web demo's layout and density are now the reference, executed with Liquid Glass and native type rather than its stylesheet. Replaces the earlier rule that the app should never resemble the demo |
+| 2026-10-22 | The globe shader sets emissive as well as base colour: the scene carries no lights, so a lit-only colour rendered black |
+| 2026-10-22 | The render test suite is serialized; `ImageRenderer` returns nil under parallel contention, which looked like nondeterminism and was not |
 | 2026-10-22 | **Spike result:** RealityKit custom materials work on iOS, and SwiftPM compiles `.metal` files inside a package. The globe is RealityKit; the Metal-view fallback is not needed |
 | 2026-10-22 | People markers are SwiftUI overlays projected onto the scene, not 3D entities, so taps, labels and VoiceOver stay ordinary |
 | 2026-10-22 | The quality governor needs four times as much evidence to raise a tier as to drop one, so it cannot flicker |

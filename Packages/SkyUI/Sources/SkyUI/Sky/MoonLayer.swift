@@ -9,13 +9,14 @@ struct MoonLayer {
     let snapshot: SkySnapshot
 
     func draw(in context: inout GraphicsContext, size: CGSize) {
-        guard snapshot.isMoonVisible else { return }
+        let visibility = snapshot.moonVisibility
+        guard visibility > 0 else { return }
 
         let radius = min(size.width, size.height) * Layout.radiusFraction
         let centre = position(in: size, radius: radius)
         let disc = CGRect(x: centre.x - radius, y: centre.y - radius,
                           width: radius * 2, height: radius * 2)
-        let tint = snapshot.theme.starTint.color.opacity(snapshot.starVisibility)
+        let tint = snapshot.theme.starTint.color.opacity(visibility)
 
         var shaded = context
         shaded.clip(to: Path(ellipseIn: disc))
@@ -26,7 +27,10 @@ struct MoonLayer {
         let illumination = snapshot.moonPhase.illumination
         let shadowOffset = radius * 2 * (snapshot.moonPhase.isWaxing ? -1 : 1) * (1 - illumination)
         let shadow = disc.offsetBy(dx: shadowOffset, dy: 0)
-        shaded.fill(Path(ellipseIn: shadow), with: .color(snapshot.gradient.top.color))
+        // Only as opaque as the lit side is bright, so the unlit part never
+        // reads darker than the sky it sits on.
+        shaded.fill(Path(ellipseIn: shadow),
+                    with: .color(snapshot.gradient.top.color.opacity(visibility)))
     }
 
     /// Azimuth places the moon across the frame, elevation up it.

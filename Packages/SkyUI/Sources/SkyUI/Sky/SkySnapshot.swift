@@ -41,9 +41,24 @@ public struct SkySnapshot: Hashable, Sendable {
 }
 
 extension SkySnapshot {
-    /// Whether anything of the moon would be seen: up, and not washed out.
+    /// Whether anything of the moon would be seen: up, and not a bare sliver.
     public var isMoonVisible: Bool {
-        moon.isVisible && moonPhase.illumination > Thresholds.faintestVisibleMoon && starVisibility > 0
+        moon.isVisible && moonPhase.illumination > Thresholds.faintestVisibleMoon
+    }
+
+    /// How strongly to draw the moon.
+    ///
+    /// Not the same as `starVisibility`: the moon is plainly visible in a
+    /// daylit sky, just paler, whereas stars are not visible at all. Tying the
+    /// two together made the moon a dark hole at dusk, because its lit side
+    /// faded while its shadow did not.
+    public var moonVisibility: Double {
+        guard isMoonVisible else { return 0 }
+        let daylight = Self.ramp(sun.elevation,
+                                 from: SolarPhase.Thresholds.blueHour,
+                                 to: Thresholds.moonFaintestAbove)
+        return Thresholds.moonInDaylight
+            + (1 - Thresholds.moonInDaylight) * (1 - daylight)
     }
 
     /// Stars appear once the sun is well down, and clouds hide them.
@@ -79,6 +94,10 @@ extension SkySnapshot {
         public static let cloudDimsGlow = 0.8
         /// Below this the sun is too far down to glow.
         public static let glowStops = -6.0
+        /// How strongly the moon shows in full daylight.
+        public static let moonInDaylight = 0.35
+        /// The sun elevation by which the moon is at its palest.
+        public static let moonFaintestAbove = 15.0
         /// By this height the halo has gone.
         public static let glowFullyFadedAbove = 25.0
     }

@@ -62,22 +62,20 @@ Switching weather source or adding caching must not change a single screen. The 
 
 **Quality tiers.** The globe and sky pick high/medium/low automatically and drop texture size, the cloud layer, and glow when the frame rate falls. The baseline device is an **iPhone 12 Pro on iOS 27**, which is available for physical testing. Profile there, not only in the simulator.
 
-## The web demo is a logic reference, not a UI reference
+## The web demo is the design reference
 
-`Same Sky_ interactive demo.html` (the file predates the rename to Hello Sky) is in the repository as a **behaviour and algorithm reference only**.
+`Same Sky_ interactive demo.html` (the file predates the rename to Hello Sky) is in the repository as the reference for **both** behaviour and layout.
 
 **Port from it:**
 
-- The astronomy in its `<script>`: `julian`, `sunState` (solar declination and subsolar longitude), `sunPos`, `moonInfo`, `moonPos`, and `sunWindow` — the last uses a 5-minute scan plus 8 bisection steps against a `-0.833°` horizon threshold. These are Phase 1's port targets.
+- The astronomy in its `<script>`: `julian`, `sunState` (solar declination and subsolar longitude), `sunPos`, `moonInfo`, `moonPos`, and `sunWindow` — the last uses a 5-minute scan plus 8 bisection steps against a `-0.833°` horizon threshold. Done in Phase 1.
 - Behaviour semantics: the `status()` thresholds (good = awake start + 0.5 h to end − 0.5 h; maybe = ±1 h either side; otherwise asleep), the overlap algorithm in `buildCallCard` (96 slots of 15 minutes, longest shared run, minimum 2 slots), and the relative-day and offset wording.
 - The seven dummy people in its `PEOPLE` array, as test fixtures.
+- **Its screen structure and density:** globe as home with tappable markers, a scrolling row of person chips showing time and status, a time slider across the day, big display time on a sky, glass cards over live colour, and the tab bar. This is what the app should feel like.
 
-**Never port from it:**
+**Do not transcribe its CSS.** The layout is the reference; the execution is native. Use `glassEffect` and system materials rather than its `rgba` glass values, SF Pro Rounded rather than the bundled Outfit font, Dynamic Type rather than fixed pixel sizes, and the `Theme` colour tables rather than its hard-coded palette. The test is whether a screen reads as the demo at a glance while behaving like an iOS app — respecting type size, Reduce Motion, VoiceOver, and light and dark appearance.
 
-- Any visual decision — layout, colour values, typography, spacing, component shapes, chrome, or animation curves. Do not translate its CSS or DOM structure into SwiftUI.
-- The sky and globe drawing code as a design: the *physics* (sun elevation driving colour, cloud cover, moon phase and tilt) carries over, the *appearance* does not.
-
-The iOS app is designed natively against Apple's Human Interface Guidelines, using Liquid Glass and current SwiftUI materials. A screen that looks like the web demo is a bug, not a milestone. When in doubt about how something should look, build the plain native version and leave the styling to the person — they iterate on UI themselves.
+**Decided 2026-10-22,** replacing an earlier rule that said never to resemble the demo. The plain list screens from Phases 2 and 3 were stand-ins written under that rule and are being replaced.
 
 ## Coding practices
 

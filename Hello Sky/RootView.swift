@@ -6,7 +6,7 @@ struct RootView: View {
     var body: some View {
         switch startup.state {
         case .ready(let store):
-            PeopleListView(store: store, weather: startup.weather)
+            HomeView(store: store, weather: startup.weather)
         case .failed(let reason):
             ContentUnavailableView(
                 "Can't open your people",
