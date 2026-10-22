@@ -1,62 +1,61 @@
 import SkyCore
 import SwiftUI
 
-/// The slider across the day, with what moment it is showing spelled out.
-///
-/// The label is the point: a slider on its own says "some time", where
-/// "Thu 7:12 PM in London" says exactly which moment every other screen means.
+/// The card that says which moment the whole screen is showing, and lets you
+/// move it.
 struct TimeSlider: View {
     @Bindable var time: TimeTravel
-    /// Whose clock the label reads from, usually you.
+    /// Whose clock the caption reads from, normally home.
     let reference: Person?
 
     @Environment(\.locale) private var locale
 
     var body: some View {
-        VStack(spacing: Layout.rowSpacing) {
-            HStack(spacing: Layout.spacing) {
-                Button(action: time.reset) {
-                    Image(systemName: time.isNow ? "clock" : "arrow.uturn.backward")
-                        .font(.footnote.weight(.semibold))
-                        .frame(width: Layout.buttonSize, height: Layout.buttonSize)
-                }
-                .buttonStyle(.plain)
-                .background(.white.opacity(Layout.buttonBackground), in: .circle)
-                .disabled(time.isNow)
-                .accessibilityLabel(time.isNow ? "Showing now" : "Back to now")
+        HStack(spacing: Layout.spacing) {
+            Button(action: time.reset) {
+                Image(systemName: time.isNow ? "clock" : "arrow.uturn.backward")
+                    .font(.body.weight(.semibold))
+                    .frame(width: Layout.button, height: Layout.button)
+            }
+            .buttonStyle(.plain)
+            .background(.white.opacity(Layout.buttonFill), in: .circle)
+            .disabled(time.isNow)
+            .accessibilityLabel(time.isNow ? "Showing now" : "Back to now")
 
-                VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: Layout.rowSpacing) {
+                HStack(alignment: .firstTextBaseline, spacing: Layout.labelSpacing) {
                     Text(offsetLabel)
-                        .font(.subheadline.weight(.semibold))
+                        .font(.headline)
                     if let caption {
                         Text(caption)
-                            .font(.caption2)
+                            .font(.footnote)
                             .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(Layout.minimumScale)
                     }
                 }
-                Spacer()
+                Slider(value: $time.offsetHours,
+                       in: TimeTravel.Constants.range,
+                       step: TimeTravel.Constants.step) {
+                    Text("Time")
+                }
+                .tint(.white.opacity(Layout.sliderTint))
+                .accessibilityValue(caption ?? offsetLabel)
             }
-
-            Slider(value: $time.offsetHours,
-                   in: TimeTravel.Constants.range,
-                   step: TimeTravel.Constants.step) {
-                Text("Time")
-            }
-            .accessibilityValue(offsetLabel)
         }
-        .padding(.horizontal, Layout.padding)
-        .padding(.vertical, Layout.verticalPadding)
-        .glassEffect(in: .rect(cornerRadius: Layout.corner))
+        .foregroundStyle(.white)
+        .padding(Layout.padding)
+        .panel(cornerRadius: Layout.corner)
     }
 
     private var offsetLabel: String {
         guard !time.isNow else { return "Now" }
         let hours = Int(time.offsetHours.rounded())
-        if hours == 0 { return "Now" }
+        guard hours != 0 else { return "Now" }
         return hours > 0 ? "+\(hours) h" : "\(hours) h"
     }
 
-    /// "Thu 7:12 PM in London", from the reference person's own clock.
+    /// "Thu 7:35 PM in London", so the moment is never ambiguous.
     private var caption: String? {
         guard let reference, let timeZone = reference.place.timeZone else { return nil }
         var style = Date.FormatStyle.dateTime.weekday(.abbreviated).hour().minute()
@@ -68,12 +67,14 @@ struct TimeSlider: View {
 
 extension TimeSlider {
     private enum Layout {
-        static let spacing: Double = 10
-        static let rowSpacing: Double = 6
+        static let spacing: Double = 14
+        static let rowSpacing: Double = 2
+        static let labelSpacing: Double = 10
         static let padding: Double = 16
-        static let verticalPadding: Double = 12
-        static let corner: Double = 24
-        static let buttonSize: Double = 30
-        static let buttonBackground = 0.14
+        static let corner: Double = 26
+        static let button: Double = 44
+        static let buttonFill = 0.12
+        static let sliderTint = 0.9
+        static let minimumScale = 0.8
     }
 }

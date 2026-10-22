@@ -4,7 +4,7 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 5 — Globe
 **Last updated:** 2026-10-22
-**Overall:** 4 of 9 phases complete · roughly 200 of 248–332 hours
+**Overall:** 4 of 9 phases complete · roughly 215 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
@@ -13,7 +13,7 @@ Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
 Phase 4  █████████░  device profiling left
 Phase 5  █████████░  looks left
-Phase 6  ██████░░░░  transition in
+Phase 6  ███████░░░  settings in
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
 ```
@@ -25,9 +25,13 @@ Phase 8  ░░░░░░░░░░  not started
 **Working on:** the real screens, brought forward from Phase 6 after the plain stand-ins were judged too bare. The app is now a globe with your people on it, chips along the bottom, a time slider, and a full-screen sky when you tap someone. 169 tests across the four packages.
 
 **Next three things:**
-1. Judge the globe and the transition by hand on the device; only the Realistic look has been looked at.
-2. Check Dusk and Ink, whose globe palettes were written but never seen.
-3. Tune the sky colour tables, still the placeholders from Phase 4.
+1. Judge the globe, arcs and transition by hand on the device.
+2. Check Dusk and Ink, whose globe palettes are reachable from the Look sheet but have never been looked at.
+3. Decide the two open questions below.
+
+**Open questions:**
+- The title says **Hello Sky**, not "Same Sky" as the reference screenshots do. Same Sky was the prototype's name; the product name was settled as Hello Sky in section 0 of the plan. Say which should win.
+- The reference tab bar reads Globe / My sky / **Widgets**. Ours keeps **People**, because widgets do not exist until Phase 7 and a tab leading to nothing is worse than one that works.
 
 **Blocked on:** nothing.
 
@@ -212,6 +216,10 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | Arcs carry no status. The lines say who you follow; the rings around the avatars say how they are. Mixing them would make the globe a chart of statuses |
+| 2026-10-23 | One dot per arc at constant angular speed, so longer arcs take longer and the dots drift out of step by themselves |
+| 2026-10-23 | A home person is chosen in settings; every arc starts there and the time card reads that city's clock |
 | 2026-10-22 | **NASA textures dropped.** The globe draws continents from a 32 KB Natural Earth land mask and a scatter of dots, as the prototype does. No imagery, no attribution burden, and all three looks restyle it |
 | 2026-10-22 | The globe moved from RealityKit to a SwiftUI `Canvas`. RealityKit was chosen for a photographic Earth; without textures a drawn globe is simpler and matches the reference. The shader spike is in git history if imagery ever returns |
 | 2026-10-22 | Globe lighting is computed in the Earth's own frame, not the view's, so turning the globe no longer changes what time it is anywhere |

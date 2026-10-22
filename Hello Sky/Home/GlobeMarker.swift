@@ -43,6 +43,7 @@ struct GlobeMarker: View {
                     .frame(width: Layout.dot, height: Layout.dot)
                     .overlay { Circle().strokeBorder(.black.opacity(Layout.dotRing), lineWidth: 1) }
             }
+            .background { StatusRipple(status: status, diameter: Layout.bubble) }
             .shadow(color: .black.opacity(Layout.shadowOpacity), radius: Layout.shadow)
     }
 

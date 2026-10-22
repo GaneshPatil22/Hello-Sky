@@ -58,7 +58,7 @@ extension GlobeCamera {
 
     public enum Motion {
         /// The slow turn when nobody is touching it.
-        public static let idleDrift = 1.5
+        public static let idleDrift = 5.0
         /// Fraction of momentum left after one second.
         public static let decayPerSecond = 0.12
         /// Below this the globe is treated as still.

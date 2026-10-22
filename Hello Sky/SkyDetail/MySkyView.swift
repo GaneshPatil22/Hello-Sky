@@ -1,3 +1,4 @@
+import SkyCore
 import SkyData
 import SkyUI
 import SwiftUI
@@ -9,11 +10,20 @@ import SwiftUI
 struct MySkyView: View {
     let store: PeopleStore
     let weather: WeatherRepository
+    let settings: AppSettings
 
     @State private var time = TimeTravel()
 
+    /// Your own sky is the home person's, which settings can change.
+    private var home: Person? {
+        if let id = settings.homePersonID, let match = store.people.first(where: { $0.id == id }) {
+            return match
+        }
+        return store.people.first
+    }
+
     var body: some View {
-        if let you = store.people.first {
+        if let you = home {
             SkyDetailView(person: you, weather: weather, time: time)
         } else {
             ContentUnavailableView(

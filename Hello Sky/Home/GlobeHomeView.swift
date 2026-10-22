@@ -12,6 +12,7 @@ import SwiftUI
 struct GlobeHomeView: View {
     let store: PeopleStore
     let weather: WeatherRepository
+    @Bindable var settings: AppSettings
 
     @State private var camera = GlobeCamera()
     @State private var transition = SkyTransition()
@@ -20,7 +21,10 @@ struct GlobeHomeView: View {
     @State private var revealOrigin: CGPoint?
     @State private var cameraBeforeFocus = GlobeCamera()
     @State private var isAddingPerson = false
+    @State private var isChoosingLook = false
+    @State private var isShowingSettings = false
     @State private var time = TimeTravel()
+    @State private var started = Date.now
 
     @Environment(\.theme) private var theme
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -42,6 +46,14 @@ struct GlobeHomeView: View {
         .safeAreaInset(edge: .bottom) { if !transition.isShowingSky { bottomControls } }
         .sheet(isPresented: $isAddingPerson) {
             AddPersonView(store: store)
+        }
+        .sheet(isPresented: $isChoosingLook) {
+            LookSheet(settings: settings)
+                .presentationDetents([.height(LookSheet.preferredHeight)])
+        }
+        .sheet(isPresented: $isShowingSettings) {
+            SettingsSheet(settings: settings, store: store)
+                .presentationDetents([.medium])
         }
         .toolbarVisibility(transition.isShowingSky ? .hidden : .automatic, for: .tabBar)
         .sensoryFeedback(.impact(weight: .light), trigger: transition.phase) { _, phase in
@@ -68,6 +80,13 @@ struct GlobeHomeView: View {
                         isInteractive: !transition.isShowingSky,
                         onCameraChange: { camera = $0 }
                     )
+                    GlobeArcsOverlay(
+                        home: homePerson,
+                        people: store.people,
+                        camera: displayCamera,
+                        elapsed: Date.now.timeIntervalSince(started)
+                    )
+                    .opacity(1 - revealProgress)
                     GlobeMarkerOverlay(
                         people: store.people,
                         camera: displayCamera,
@@ -109,35 +128,27 @@ struct GlobeHomeView: View {
     }
 
     private var topBar: some View {
-        HStack {
-            Text("Hello Sky")
-                .font(.headline)
-            Spacer()
-            Button("Add Person", systemImage: "plus") { isAddingPerson = true }
-                .disabled(store.isFull)
-                .labelStyle(.iconOnly)
-        }
-        .padding(.horizontal, Layout.padding)
+        HomeTopBar(
+            canAddPerson: !store.isFull,
+            onAddPerson: { isAddingPerson = true },
+            onChooseLook: { isChoosingLook = true },
+            onOpenSettings: { isShowingSettings = true }
+        )
         .padding(.vertical, Layout.barPadding)
-        .glassEffect(in: .rect(cornerRadius: Layout.barCorner))
-        .padding(.horizontal, Layout.padding)
         .transition(.opacity)
     }
 
     private var bottomControls: some View {
         VStack(spacing: Layout.spacing) {
-            if store.people.isEmpty {
-                emptyPrompt
-            } else {
-                chips
-            }
-            TimeSlider(time: time, reference: store.people.first)
+            TimeSlider(time: time, reference: homePerson)
+            peopleRow
         }
-        .padding(Layout.padding)
+        .padding(.horizontal, Layout.padding)
+        .padding(.bottom, Layout.padding)
         .transition(.opacity)
     }
 
-    private var chips: some View {
+    private var peopleRow: some View {
         ScrollViewReader { scroller in
             ScrollView(.horizontal) {
                 HStack(spacing: Layout.chipSpacing) {
@@ -146,10 +157,14 @@ struct GlobeHomeView: View {
                             person: person,
                             date: date,
                             isSelected: openedPerson?.id == person.id,
+                            isHome: person.id == homePerson?.id,
                             action: { open(person, in: nil) }
                         )
                         .id(person.id)
                     }
+                    AddPersonCard { isAddingPerson = true }
+                        .opacity(store.isFull ? Layout.disabled : 1)
+                        .disabled(store.isFull)
                 }
                 .scrollTargetLayout()
             }
@@ -160,15 +175,6 @@ struct GlobeHomeView: View {
                 withAnimation { scroller.scrollTo(id, anchor: .center) }
             }
         }
-    }
-
-    private var emptyPrompt: some View {
-        Button("Add someone to see their sky", systemImage: "person.badge.plus") {
-            isAddingPerson = true
-        }
-        .font(.subheadline)
-        .padding(Layout.padding)
-        .glassEffect(in: .rect(cornerRadius: Layout.barCorner))
     }
 
     // MARK: - The move
@@ -231,6 +237,14 @@ struct GlobeHomeView: View {
 
     // MARK: - Derived
 
+    /// The person every arc starts from, and whose clock the time card reads.
+    private var homePerson: Person? {
+        if let id = settings.homePersonID, let match = store.people.first(where: { $0.id == id }) {
+            return match
+        }
+        return store.people.first
+    }
+
     private var openedPerson: Person? {
         transition.personID.flatMap { id in store.people.first { $0.id == id } }
     }
@@ -255,9 +269,10 @@ extension GlobeHomeView {
         static let barCorner: Double = 22
         static let spacing: Double = 12
         static let chipSpacing: Double = 10
+        static let disabled = 0.4
         /// Height kept free at the bottom for the chips and the time card.
-        static let controlsReserve: Double = 340
+        static let controlsReserve: Double = 300
         /// Height kept free at the top for the status bar and the title.
-        static let topReserve: Double = 104
+        static let topReserve: Double = 92
     }
 }
