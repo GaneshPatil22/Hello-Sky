@@ -11,7 +11,7 @@ Last updated 2026-10-22, with all planning decisions applied. This file merges t
 | Decision | Choice | Notes |
 | --- | --- | --- |
 | Name | Hello Sky | Checked and available. It stays unreserved until the app record exists in App Store Connect, so reserve it after the first real progress milestone |
-| Minimum iOS | 18 | Raise it only if a feature clearly needs a newer version. The main candidates are Liquid Glass styling and on-device AI captions, both iOS 26 |
+| Minimum iOS | 27 | Latest iOS only. This is a deliberate choice to keep one code path: Liquid Glass styling and on-device AI captions are available unconditionally, with no runtime fallbacks to maintain |
 | Globe | RealityKit | Phase 5 opens with a spike; a Metal view is the fallback only if the spike fails |
 | Weather | Open-Meteo while developing, WeatherKit for release | **Important:** all weather goes through a provider layer and a repository layer (section 6), so switching sources or adding a cache never touches screens |
 | Widgets on a free Apple ID | Not possible: App Groups are unavailable | Build widgets with sample data; enroll in the paid program before Phase 7 to share real data |
@@ -20,9 +20,9 @@ Last updated 2026-10-22, with all planning decisions applied. This file merges t
 | Developer account | Enroll as an individual before Phase 7 | Needed for widget data sharing (App Groups), WeatherKit, and TestFlight |
 | People avatars | Emoji only in v1 | Photos come in v2; the model stores an avatar type so no data migration is needed |
 | "You" location | Typed home city, with optional device location | |
-| Test devices | iPhone 12 on iOS 27 is the performance baseline | The iOS 18 minimum is checked in the iOS 18 simulator |
+| Test devices | The oldest iPhone that runs iOS 27 is the performance baseline | Confirm which model that is before Phase 5; it sets the quality-tier floor |
 | Older iPhones | Automatic quality tiers | Texture size, clouds, and glow drop when the frame rate drops, so phones that cannot be tested still run well |
-| Glass styling | `glassEffect` on iOS 26 and later, `Material` on iOS 18 to 25 | Both paths chosen at runtime |
+| Glass styling | `glassEffect` everywhere | No `Material` fallback needed at an iOS 27 minimum |
 | Clouds | Live Cloud Maps snapshot bundled in the app | Public-domain images; credit "Contains modified EUMETSAT data" |
 | Credits | Apple Weather mark and legal link inside the app; other credits in the app’s credits screen and on the website | See "Credits and attribution" in section 6 |
 | Privacy policy and support pages | Built on your own website after the app is ready | Must be live before submission in Phase 8 |
@@ -117,23 +117,23 @@ v1 leaves out anything that adds a backend, a moderation burden, or a second pla
 
 ### Stack
 
-SwiftUI for the app, SwiftData for storage, WidgetKit for widgets, RealityKit for the globe, and Canvas with Metal shaders for the sky. The minimum is **iOS 18** (needed for `RealityView` on iOS, `MeshGradient`, and the new `Tab` API). Raise it only if a feature clearly needs a newer version; Liquid Glass styling (`glassEffect`) and on-device AI captions are the likely candidates, and both need iOS 26.
+SwiftUI for the app, SwiftData for storage, WidgetKit for widgets, RealityKit for the globe, and Canvas with Metal shaders for the sky. The minimum is **iOS 27** — latest only. Everything the app needs (`RealityView`, `MeshGradient`, `Tab`, `glassEffect`, on-device AI captions) is available without availability checks or fallback paths. The cost is a smaller addressable device list; the gain is one code path everywhere.
 
 ### How the web demo maps to SwiftUI
 
 | Demo feature | SwiftUI or Apple framework | Notes |
 | --- | --- | --- |
-| Tabs | `TabView` with `Tab` | iOS 18 API |
+| Tabs | `TabView` with `Tab` | |
 | Globe | `RealityView` with RealityKit | See the globe section below |
 | Person markers and labels | SwiftUI overlays placed by projecting each city to the screen | Easier taps and VoiceOver than 3D entities |
 | Arcs between people | `Canvas` overlay first, RealityKit mesh later | The projection math is already in the demo |
-| Live sky | `TimelineView` with `Canvas`, `MeshGradient`, and a Metal shader through `colorEffect` | `MeshGradient` is iOS 18 |
+| Live sky | `TimelineView` with `Canvas`, `MeshGradient`, and a Metal shader through `colorEffect` | |
 | Clouds, stars, rain | `Canvas` drawing from seeded random values | Same approach as the demo |
 | Globe-to-sky reveal | RealityKit camera move plus an animated circular `mask` | Build as a custom transition |
 | GSAP timelines | `withAnimation`, springs, `PhaseAnimator`, `KeyframeAnimator` | |
 | Time slider and play | `Slider` plus one shared observable time model | |
 | Person chips | Horizontal `ScrollView` with `scrollTargetBehavior(.viewAligned)` | |
-| Glass cards | `glassEffect` on iOS 26 and later, `Material` backgrounds on iOS 18 to 25 | Both paths chosen at runtime |
+| Glass cards | `glassEffect` | No fallback path |
 | Sheets | `.sheet` with `presentationDetents` | |
 | Share card | `ImageRenderer` with `ShareLink` | |
 | Haptics | `sensoryFeedback` | |
@@ -238,7 +238,7 @@ The app gets an About and credits screen in Phase 6; the Apple Weather mark and 
 
 ### Test devices and quality tiers
 
-The iPhone 12 on iOS 27 is the performance baseline for the globe and sky. iOS 18 also runs on older iPhones that cannot be tested here, so the app picks a quality tier automatically (high, medium, or low) and lowers texture size, the cloud layer, and glow effects when the frame rate drops. A forced low tier in testing stands in for the older phones. The minimum-OS behavior is checked in the iOS 18 simulator.
+The oldest iPhone that runs iOS 27 is the performance baseline for the globe and sky; confirm which model that is before Phase 5. Because that phone cannot necessarily be tested here, the app still picks a quality tier automatically (high, medium, or low) and lowers texture size, the cloud layer, and glow effects when the frame rate drops. A forced low tier in testing stands in for untested phones.
 
 ### Edge cases to test from day one
 
@@ -317,7 +317,7 @@ The goal is an empty but real project that builds, runs its tests, and holds the
 - **v1 features delivered:** none visible. Sets the privacy-by-design rule (no accounts, no analytics SDKs, no ads).
 - **Build:** the Xcode project with an app target and an empty widget extension; the local packages from the structure above; a data-driven `Theme` system with a `ThemeRegistry` holding the three looks, so a new look is one new data file and needs no screen changes; a fixtures folder with the demo’s dummy people; a test target in each package; a git repository with a README of run steps.
 - **Test:** the app launches in the simulator; each package’s tests pass, even if each holds only one placeholder; the app installs on your own iPhone with a free Apple ID.
-- **Test devices:** run on the iPhone 12 (iOS 27) and in the iOS 18 simulator from the first day, so minimum-version problems show up early.
+- **Test devices:** run on a physical iPhone and in the iOS 27 simulator from the first day. There is no older-OS path to check, so testing focuses on the slowest supported device rather than on version differences.
 - **Done when:** a fresh clone builds and passes all tests with one command, and a test look added only through the registry shows up in the look picker.
 - **Account:** free Apple ID.
 
@@ -377,7 +377,7 @@ The goal is the realistic globe, spinning and responding to time, working on its
 The goal is the whole demo flow running on the real engine: globe, then someone’s sky, then back, with the time slider driving everything.
 
 - **v1 features delivered:** Their sky and My sky (local time, status, weather chips, next sun event, best time to call), the time slider and play, the shareable sky card, the signature transition, and the add-person, looks, and settings sheets (12/24-hour, units, look, Reduce Motion).
-- **Build:** a small navigation state machine; the zoom-and-reveal transition (camera move plus a circular mask); one shared time model with offset and play; the sky detail data; the share card through `ImageRenderer`; the sheets with working behavior and plain styling, using glass styling on iOS 26 and later and a material fallback below; an About and credits screen with the current credit lines.
+- **Build:** a small navigation state machine; the zoom-and-reveal transition (camera move plus a circular mask); one shared time model with offset and play; the sky detail data; the share card through `ImageRenderer`; the sheets with working behavior and plain styling, using `glassEffect` styling; an About and credits screen with the current credit lines.
 - **Test:** state-machine unit tests, such as refusing to open a sky while a transition is running; UI tests that open and close a sky; the Reduce Motion path; opening and closing 50 times with the Memory Graph and Leaks instrument open.
 - **Done when:** every flow in the demo works with the real astronomy, mock weather, and the real globe.
 - **Account:** free Apple ID.
@@ -526,7 +526,7 @@ These are ideas worth keeping on the list. None is committed, and each should be
 | Globe technology | RealityKit custom materials are untested on iOS here | Phase 5 spike first; Metal view only if the spike fails |
 | Weather allowance | About 400 active users at the assumed refresh rate | Repository cache and budget, clear-sky fallback, shared cache as a new provider later |
 | Globe and sky performance | Two heavy visuals can drain battery | Profile on the iPhone 12; automatic quality tiers; animate only on screen |
-| Older iPhones | iOS 18 runs on phones older than the iPhone 12, which cannot be tested here | Quality tiers and a forced low tier in testing |
+| Older iPhones | The oldest iPhones running iOS 27 cannot be tested here | Quality tiers and a forced low tier in testing |
 | Pitch clarity | "World clock plus weather" undersells it | Test the one-line pitch on 5 people before launch |
 | Retention after setup | People add friends once, then forget | Widgets and sunrise and sunset alerts |
 | Widgets on a free account | App Groups are unavailable on a free Apple ID (confirmed) | Sample data until enrolling; enroll before Phase 7 |
