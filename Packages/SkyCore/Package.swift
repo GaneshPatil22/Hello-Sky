@@ -10,6 +10,10 @@ let package = Package(
     ],
     targets: [
         .target(name: "SkyCore"),
-        .testTarget(name: "SkyCoreTests", dependencies: ["SkyCore"]),
+        .testTarget(
+            name: "SkyCoreTests",
+            dependencies: ["SkyCore"],
+            resources: [.process("Fixtures")]
+        ),
     ]
 )

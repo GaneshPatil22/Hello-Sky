@@ -2,13 +2,13 @@
 
 Live tracker for Hello Sky. Updated before every commit.
 
-**Current phase:** Phase 0 — Foundation
+**Current phase:** Phase 1 — Sky engine
 **Last updated:** 2026-10-22
-**Overall:** 0 of 9 phases complete · roughly 11 of 248–332 hours
+**Overall:** 1 of 9 phases complete · roughly 33 of 248–332 hours
 
 ```
-Phase 0  █████████░  in progress
-Phase 1  ░░░░░░░░░░  not started
+Phase 0  █████████░  device install left
+Phase 1  ██████████  complete
 Phase 2  ░░░░░░░░░░  not started
 Phase 3  ░░░░░░░░░░  not started
 Phase 4  ░░░░░░░░░░  not started
@@ -22,12 +22,12 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 0 foundation — everything except the device install is done. The theme system, fixtures, and widget extension are all in and tested.
+**Working on:** Phase 1 is complete — the astronomy, time, status, and overlap logic are all in `SkyCore` with 49 tests, checked against `astral` across nine cities and eight dates. Worst disagreement is 67 seconds, at Reykjavik's summer solstice.
 
 **Next three things:**
-1. Install on the iPhone 12 Pro with a free Apple ID, which closes Phase 0. *(Needs the device; the simulator cannot prove signing.)*
-2. Start Phase 1: port `sunState`, `sunPos`, and `julian` from the web demo into `SkyCore`.
-3. Generate sunrise and sunset fixtures from `astral` for the eight fixture cities.
+1. Install on the iPhone 12 Pro with a free Apple ID, the one Phase 0 item left. *(Needs the device; the simulator cannot prove signing.)*
+2. Start Phase 2, 3, 4, or 5 — they can run in any order now that Phase 1 is done.
+3. Phase 4 (sky renderer) is the natural next one: it turns the engine and the look system into something visible.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -57,15 +57,16 @@ Phase 8  ░░░░░░░░░░  not started
 
 *Target 20–28 h · all astronomy and time logic proven by unit tests before any screen exists.*
 
-- [ ] Sun elevation, azimuth, and subsolar point
-- [ ] Sunrise and sunset search, including polar day and night
-- [ ] Moon phase and rough moon position
-- [ ] Local-time helpers built on `TimeZone`
-- [ ] Awake-status rules
-- [ ] Best-overlap window finder
-- [ ] Fixtures generated from `astral`, two-minute tolerance
-- [ ] Edge-case tests: half-hour and 45-minute zones, date line, DST, polar day/night, leap day
-- [ ] Performance check: next-event search fast enough to call every second
+- [x] Sun elevation, azimuth, and subsolar point
+- [x] Sunrise and sunset search, including polar day and night
+- [x] Moon phase and rough moon position
+- [x] Local-time helpers built on `TimeZone`
+- [x] Awake-status rules
+- [x] Best-overlap window finder
+- [x] Fixtures generated from `astral`, two-minute tolerance
+- [x] Edge-case tests: half-hour and 45-minute zones, date line, DST, polar day/night, leap day
+- [x] Performance check: next-event search fast enough to call every second
+- [x] `make check-core` enforces that `SkyCore` imports no UI framework
 
 **Done when:** all tests pass and the package imports no UI framework.
 
@@ -203,6 +204,8 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | Sunrise and sunset are found by a 5-minute scan plus 14 bisections, matching `astral` to within 67 seconds |
+| 2026-10-22 | Polar day and night are reported as an absence of events, so callers cannot assume a sunrise is coming |
 | 2026-10-22 | Packages declare `.macOS(.v26)` alongside `.iOS(.v27)` so `swift test` runs on the host; the shipping app stays iPhone-only |
 | 2026-10-22 | `Theme.name` is a `LocalizedStringResource`; the String Catalog it resolves against arrives in Phase 8 |
 | 2026-10-22 | The widget keeps closure-based `TimelineProvider`; Phase 7 moves to `AppIntentTimelineProvider` for person selection |
