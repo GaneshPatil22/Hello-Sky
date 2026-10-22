@@ -48,7 +48,7 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] `make test` runs every package's tests and builds the app
 - [ ] Empty widget extension target
 - [ ] `Theme` type and `ThemeRegistry` holding the three looks
-- [ ] Fixtures folder with the demo's dummy people
+- [ ] Fixtures folder with the demo's seven dummy people
 - [ ] Verify: app installs on the iPhone 12 Pro with a free Apple ID
 
 **Done when:** a fresh clone builds and passes all tests with one command, and a test look added only through the registry appears in the look picker.
@@ -191,7 +191,6 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 ## Open questions
 
 - [ ] Which iPhone models does iOS 27 support? Sets the quality-tier floor.
-- [ ] Add the web demo HTML to the repository, or record where it lives.
 - [ ] Reserve the name Hello Sky in App Store Connect after the first real milestone.
 
 ## Decision log
@@ -204,3 +203,4 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | The web demo is a logic and behaviour reference only — its UI is never copied; the app is designed natively against the HIG and Liquid Glass |

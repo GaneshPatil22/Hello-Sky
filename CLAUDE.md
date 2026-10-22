@@ -62,6 +62,23 @@ Switching weather source or adding caching must not change a single screen. The 
 
 **Quality tiers.** The globe and sky pick high/medium/low automatically and drop texture size, the cloud layer, and glow when the frame rate falls. The baseline device is an **iPhone 12 Pro on iOS 27**, which is available for physical testing. Profile there, not only in the simulator.
 
+## The web demo is a logic reference, not a UI reference
+
+`Same Sky_ interactive demo.html` (the file predates the rename to Hello Sky) is in the repository as a **behaviour and algorithm reference only**.
+
+**Port from it:**
+
+- The astronomy in its `<script>`: `julian`, `sunState` (solar declination and subsolar longitude), `sunPos`, `moonInfo`, `moonPos`, and `sunWindow` — the last uses a 5-minute scan plus 8 bisection steps against a `-0.833°` horizon threshold. These are Phase 1's port targets.
+- Behaviour semantics: the `status()` thresholds (good = awake start + 0.5 h to end − 0.5 h; maybe = ±1 h either side; otherwise asleep), the overlap algorithm in `buildCallCard` (96 slots of 15 minutes, longest shared run, minimum 2 slots), and the relative-day and offset wording.
+- The seven dummy people in its `PEOPLE` array, as test fixtures.
+
+**Never port from it:**
+
+- Any visual decision — layout, colour values, typography, spacing, component shapes, chrome, or animation curves. Do not translate its CSS or DOM structure into SwiftUI.
+- The sky and globe drawing code as a design: the *physics* (sun elevation driving colour, cloud cover, moon phase and tilt) carries over, the *appearance* does not.
+
+The iOS app is designed natively against Apple's Human Interface Guidelines, using Liquid Glass and current SwiftUI materials. A screen that looks like the web demo is a bug, not a milestone. When in doubt about how something should look, build the plain native version and leave the styling to the person — they iterate on UI themselves.
+
 ## Coding practices
 
 Use the `swiftui-pro` skill whenever writing or reviewing Swift/SwiftUI in this repo.

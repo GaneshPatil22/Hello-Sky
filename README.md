@@ -139,3 +139,4 @@ City coordinates are sent to Apple's weather service to retrieve forecasts. That
 | [PROGRESS.md](PROGRESS.md) | Live phase tracker — what is done, in progress, and next |
 | [hello-sky-plan.md](hello-sky-plan.md) | The full product and build plan; the source of truth for scope and decisions |
 | [CLAUDE.md](CLAUDE.md) | Architecture rules and coding conventions for contributors and AI assistants |
+| `Same Sky_ interactive demo.html` | The original web prototype, kept as an algorithm and behaviour reference. Its UI is **not** a design reference — the app is built natively against Apple's HIG. |
