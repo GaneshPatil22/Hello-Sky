@@ -61,6 +61,18 @@ Switching weather source or adding caching must not change a single screen. The 
 
 **Quality tiers.** The globe and sky pick high/medium/low automatically and drop texture size, the cloud layer, and glow when the frame rate falls. The baseline is the oldest iPhone that runs iOS 27 — confirm which model that is before Phase 5.
 
+## Coding practices
+
+Use the `swiftui-pro` skill whenever writing or reviewing Swift/SwiftUI in this repo.
+
+- **SOLID and DRY, applied with judgment.** One type, one job. Depend on protocols at the seams that matter (`WeatherProvider`, `ThemeRegistry`) and on concrete types everywhere else. Extract a shared helper on the second real duplication, not the first — two things that merely look alike often diverge later.
+- **Pure functions by default.** All astronomy, status, overlap, and theme resolution are `(input) -> output` with no clocks, no network, no globals. `Date` is a parameter, never `Date()` read inside the function. This is what makes `SkyCore` testable in seconds and the sky renderer reproducible in snapshots.
+- **Push side effects to the edges.** Network, disk, SwiftData, notifications, and haptics live in `SkyData` or in view models — never inside a view body, a renderer, or a `SkyCore` type.
+- **No hard-coded values.** Tuning numbers, durations, sizes, thresholds, colors, keys, and URLs go in a named constant (a `Constants` enum, or the `Theme` data for anything visual). A literal that appears in a view body should be a named value that says what it means. Strings shown to the user belong in the String Catalog.
+- **Do not over-engineer.** No protocol with one implementation that will never gain a second, no generic abstraction written for an imagined future, no manager or coordinator layer added before something needs coordinating. The seams above are specified because the plan proves they will be swapped; everything else starts concrete and gets abstracted when a second case actually arrives.
+
+Balance is the rule: these principles serve readable, testable code, and when one of them starts producing ceremony instead, stop applying it.
+
 ## Correctness traps
 
 Time and astronomy edge cases belong in tests from the first commit: half-hour and 45-minute zones (India, Nepal), the date line, DST changes landing on different dates per country, polar day and night where the sun never rises or sets, a traveler whose phone changes time zone, and leap day. Sunrise/sunset fixtures are generated from the `astral` library with a two-minute tolerance.
@@ -79,4 +91,6 @@ Weather and texture sources carry mandatory credits — Apple Weather mark plus 
 
 ## Skills
 
-`swiftui-pro` (in `.agents/skills/`, symlinked into `.claude/skills/`) reviews Swift and SwiftUI for modern API usage and performance. Invoke it when writing or reviewing SwiftUI in this repo.
+`swiftui-pro` (in `.agents/skills/`, symlinked into `.claude/skills/`) reviews Swift and SwiftUI for modern API usage, accessibility, and performance. Its `references/` folder covers views, data flow, navigation, performance, and localization.
+
+`/commit` (in `.claude/commands/`) writes a commit as title, one-line description, and exactly three bullets, with no AI attribution trailer.

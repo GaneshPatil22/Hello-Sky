@@ -357,7 +357,7 @@ The goal is a sky that is a pure function of place, time, weather, and look, che
 
 - **v1 features delivered (visuals):** the live sky itself, with real sun glow, clouds, stars, moon with its real phase, hills, rain, and the sky half of the three looks.
 - **Build:** a `SkyView` using `TimelineView` and `Canvas` for stars, clouds, moon, hills, and rain, with `MeshGradient` or layered gradients for the atmosphere and an optional Metal shader for glow. Colors and phases come from `SkyCore` and `Theme`. Randomness is seeded so previews and snapshots stay stable.
-- **Test:** a debug gallery that lays out times, weather types, and looks in a grid, as the demo’s contact sheet did; snapshot tests for about a dozen fixed cases rendered with `ImageRenderer`; frame-time profiling in Instruments on the iPhone 12; a still-frame path when Reduce Motion is on.
+- **Test:** a debug gallery that lays out times, weather types, and looks in a grid, as the demo’s contact sheet did; snapshot tests for about a dozen fixed cases rendered with `ImageRenderer`; frame-time profiling in Instruments on the baseline device; a still-frame path when Reduce Motion is on.
 - **Done when:** the gallery looks right for four cities at six times of day, and dragging a time slider changes the sky smoothly.
 - **Account:** free Apple ID.
 
@@ -368,8 +368,8 @@ The goal is the realistic globe, spinning and responding to time, working on its
 - **v1 features delivered:** Globe group (realistic globe, live day/night line, city lights, people markers, arcs, and the globe half of the three looks).
 - **Spike first:** put a textured sphere with a custom day/night material on screen in a throwaway project. If RealityKit custom materials cause trouble on iOS, move the same shader to a Metal view and record the decision.
 - **Build:** the day and night textures and the bundled cloud and specular maps; the day/night shader driven by a sun direction from `SkyCore`; an atmosphere glow; orbit dragging with inertia and slow auto-rotation; people markers projected from 3D to the screen with tap detection; arcs between people; the three looks as shader settings; automatic quality tiers (high, medium, low) with a manual override for testing.
-- **Test:** a unit test that the sun direction matches `SkyCore`; a check that the day/night line crosses a test city exactly when `SkyCore` says its sun elevation is zero; visual checks at the solstices, the equinoxes, and midnight UTC; a texture memory check; frame-rate profiling on the iPhone 12, plus a forced low tier to confirm older phones will hold up.
-- **Done when:** a test slider moves the day/night line correctly and the globe stays smooth while dragging on the iPhone 12.
+- **Test:** a unit test that the sun direction matches `SkyCore`; a check that the day/night line crosses a test city exactly when `SkyCore` says its sun elevation is zero; visual checks at the solstices, the equinoxes, and midnight UTC; a texture memory check; frame-rate profiling on the baseline device, plus a forced low tier to confirm older phones will hold up.
+- **Done when:** a test slider moves the day/night line correctly and the globe stays smooth while dragging on the baseline device.
 - **Account:** free Apple ID. Credit NASA for the imagery in the app.
 
 ### Phase 6: App flow and the signature transition (about 40 to 50 hours)
@@ -415,7 +415,7 @@ The goal is a release candidate on real weather, in the hands of testers. When t
 - [ ] Privacy: no accounts, no ads, no analytics SDKs, accurate privacy label
 - [ ] Weather: switching provider, or adding a stub shared-cache provider, needs no screen changes
 - [ ] Looks: a new look can be added through the registry alone
-- [ ] Signature transition proven on the iPhone 12
+- [ ] Signature transition proven on the baseline device
 - [ ] TestFlight build passes review
 
 ### Effort and timeline
@@ -525,7 +525,7 @@ These are ideas worth keeping on the list. None is committed, and each should be
 | Scope creep | Many appealing add-ons | Non-goals list; ship the signature moment first |
 | Globe technology | RealityKit custom materials are untested on iOS here | Phase 5 spike first; Metal view only if the spike fails |
 | Weather allowance | About 400 active users at the assumed refresh rate | Repository cache and budget, clear-sky fallback, shared cache as a new provider later |
-| Globe and sky performance | Two heavy visuals can drain battery | Profile on the iPhone 12; automatic quality tiers; animate only on screen |
+| Globe and sky performance | Two heavy visuals can drain battery | Profile on the baseline device; automatic quality tiers; animate only on screen |
 | Older iPhones | The oldest iPhones running iOS 27 cannot be tested here | Quality tiers and a forced low tier in testing |
 | Pitch clarity | "World clock plus weather" undersells it | Test the one-line pitch on 5 people before launch |
 | Retention after setup | People add friends once, then forget | Widgets and sunrise and sunset alerts |
@@ -541,7 +541,7 @@ All planning questions are resolved (section 0). These tasks are not blocking an
 - [ ] Build the privacy policy and support pages on your website and publish them before submission in Phase 8. The privacy policy must say that city coordinates are sent to Apple’s weather service.
 - [ ] Write the final credits wording: the Apple Weather mark and legal link inside the app; NASA, EUMETSAT, and any texture credits in the credits screen and on the website.
 - [ ] Review the Claude Code icons and replace them with designer work only if they are not good enough.
-- [ ] Revisit the minimum iOS version only if a feature clearly needs a newer one.
+- [ ] Confirm the oldest iPhone that runs iOS 27 and buy or borrow one as the performance baseline, before Phase 5.
 - [ ] If active users approach the 500,000 monthly weather calls, use the repository budget and a shared cache first; Apple’s next plan is 1 million calls a month for US$49.99.
 
 **Parked on purpose:** the API idea, until v1 ships; and Daily Wrapped, which could return later as a mode that shows the sky of your day.
