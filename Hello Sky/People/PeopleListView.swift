@@ -8,6 +8,7 @@ import SwiftUI
 /// screens. It exists to prove the store and the engine agree.
 struct PeopleListView: View {
     let store: PeopleStore
+    let weather: WeatherRepository
 
     @State private var isAddingPerson = false
     @State private var isShowingFailure = false
@@ -40,6 +41,11 @@ struct PeopleListView: View {
                     Button("Add Person", systemImage: "plus") { isAddingPerson = true }
                         .disabled(store.isFull)
                 }
+                #if DEBUG
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink("Weather", destination: WeatherDebugView(people: store.people, repository: weather))
+                }
+                #endif
             }
             .sheet(isPresented: $isAddingPerson) {
                 AddPersonView(store: store)
@@ -74,5 +80,5 @@ extension PeopleListView {
 #Preview {
     let store = try! PeopleStore(inMemory: true)
     try! store.seedWithFixtures()
-    return PeopleListView(store: store)
+    return PeopleListView(store: store, weather: WeatherRepository(provider: MockWeatherProvider()))
 }

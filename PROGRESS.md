@@ -2,15 +2,15 @@
 
 Live tracker for Hello Sky. Updated before every commit.
 
-**Current phase:** Phase 2 — People and storage
+**Current phase:** Phase 3 — Weather layer
 **Last updated:** 2026-10-22
-**Overall:** 2 of 9 phases complete · roughly 57 of 248–332 hours
+**Overall:** 3 of 9 phases complete · roughly 81 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
 Phase 1  ██████████  complete
 Phase 2  █████████░  UI test deferred
-Phase 3  ░░░░░░░░░░  not started
+Phase 3  ██████████  complete
 Phase 4  ░░░░░░░░░░  not started
 Phase 5  ░░░░░░░░░░  not started
 Phase 6  ░░░░░░░░░░  not started
@@ -22,10 +22,10 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 2 is built — people persist, a plain list shows the right local time and status for each, and a 201-city catalogue backs offline search. 91 tests across the four packages.
+**Working on:** Phase 3 is complete — weather goes through both seams, always answers, and the contract tests run against three providers including the shared-cache stub. 119 tests across the four packages.
 
 **Next three things:**
-1. Start Phase 3, the weather layer: `SkyWeather`, the provider protocol, and the repository.
+1. Start Phase 4, the sky renderer: `SkyView`, the debug gallery, and snapshot tests.
 2. Install on the iPhone 12 Pro with a free Apple ID, the one Phase 0 item left.
 3. Add an app UI-test target when Phase 6 builds the real screens, and move the deferred "add Tokyo" check there.
 
@@ -89,14 +89,15 @@ Phase 8  ░░░░░░░░░░  not started
 
 *Target 20–28 h · any screen can ask for a place's weather and always get an answer.*
 
-- [ ] `SkyWeather` model and `WeatherProvider` protocol
-- [ ] `MockWeatherProvider` reading fixtures
-- [ ] `OpenMeteoProvider` with its credit line
-- [ ] `WeatherRepository`: cache, request sharing, daily budget, clear-sky fallback
-- [ ] Provider choice by build configuration
-- [ ] Contract tests running the same assertions on every provider
-- [ ] Stub `SharedCacheProvider` proving a new source needs no screen changes
-- [ ] Debug screen listing weather for every person
+- [x] `SkyWeather` model and `WeatherProvider` protocol
+- [x] `MockWeatherProvider` reading fixtures
+- [x] `OpenMeteoProvider` with its credit line, decoding saved responses in tests
+- [x] `WeatherRepository`: cache, request sharing, daily budget, clear-sky fallback
+- [x] On-disk cache keyed by city and hour, surviving relaunch
+- [x] Provider choice by build configuration
+- [x] Contract tests running the same assertions on every provider
+- [x] Stub `SharedCacheProvider` proving a new source needs no screen changes
+- [x] Debug screen listing weather for every person
 
 **Done when:** with the network off, every person still shows a weather value, and switching providers needs no screen changes.
 
@@ -206,6 +207,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | `SkyWeather` carries a `WeatherOrigin`, so an estimate is never shown under a weather service's attribution |
+| 2026-10-22 | An estimated reading reports no temperature rather than inventing one |
+| 2026-10-22 | The repository cannot fail: live, then cache however stale, then a clear sky — so no screen needs a weather error path |
 | 2026-10-22 | `StoredPerson` has defaults on every property and no unique attributes, so v2's iCloud sync needs no migration |
 | 2026-10-22 | The avatar is stored as kind plus value, so photo avatars in v2 add a kind rather than change the schema |
 | 2026-10-22 | A row that cannot be read — unknown avatar kind or time zone — is skipped, not deleted; a later version may understand it |

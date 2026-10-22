@@ -9,7 +9,7 @@ Open a globe with your people on it. Tap one, and the whole screen becomes their
 ![Platform](https://img.shields.io/badge/platform-iOS%2027%2B-black)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 ![Device](https://img.shields.io/badge/device-iPhone-lightgrey)
-![Status](https://img.shields.io/badge/status-Phase%202%20complete-yellow)
+![Status](https://img.shields.io/badge/status-Phase%203%20complete-yellow)
 
 > **Status:** early development. The astronomy engine, look system, and people storage are built and tested. The only screen so far is a plain list, standing in until the globe arrives in Phase 6.
 > See [PROGRESS.md](PROGRESS.md) for the live phase-by-phase tracker.
@@ -35,7 +35,7 @@ Eight feature groups ship in v1. All of them work with no account, no server, an
 |---|---|---|---|
 | 🌍 | **Globe** | Interactive 3D Earth with a live day/night line, city lights, a 24-hour time slider, and three looks | Not started |
 | 👥 | **People** | Add up to 10 people with a name, city, and emoji avatar; editable awake hours; Good time / Maybe / Sleeping status; best-overlap window | Working, on a plain screen |
-| 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Not started |
+| 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Weather and astronomy done |
 | 🌅 | **My sky** | The same screen for your own location or a typed city, with golden hour, blue hour, and moon phase | Astronomy done |
 | 📱 | **Widgets** | Small, medium, and Lock Screen widgets showing a person's time over their real sky | Not started |
 | 🔔 | **Alerts** | Optional per-person sunrise and sunset notifications, computed on the device | Not started |
@@ -108,7 +108,9 @@ Three rules hold the design together:
 
 Sun and moon positions come from the low-precision solar model; sunrise and sunset are found by scanning for a horizon crossing and bisecting it. The engine is tested against [`astral`](https://pypi.org/project/astral/) across nine cities and eight dates — solstices, equinoxes, a leap day, and both European and American daylight-saving weekends — agreeing to within 67 seconds. Polar day and night are reported as the *absence* of a sunrise or sunset, so no caller can assume one is coming.
 
-**Weather passes through two seams.** `WeatherProvider` swaps the *source* — mock, Open-Meteo in development, WeatherKit at release, a shared cache later. `WeatherRepository` owns the *behaviour* — on-disk cache, in-flight request sharing, a daily call budget, and a fallback chain ending in a clear-sky model computed from astronomy. Screens only ever see `SkyWeather`, so changing weather source touches no UI.
+**Weather passes through two seams.** `WeatherProvider` swaps the *source* — mock, Open-Meteo in development, WeatherKit at release, a shared cache later. `WeatherRepository` owns the *behaviour* — on-disk cache keyed by city and hour, in-flight request sharing, a daily call budget, and a fallback chain ending in a clear-sky model. Screens only ever see `SkyWeather`, so changing weather source touches no UI.
+
+The repository **cannot fail**: it answers live, then from cache however stale, then with an estimate, which means no screen carries a weather error path. Each reading records where it came from, so an estimate is never shown under a weather service's name, and an estimate reports no temperature rather than inventing one. A contract test suite runs the same assertions against every provider, including a `SharedCacheProvider` stub that exists only to prove a new source needs no change to the repository or to any screen.
 
 **City search falls back, never dead-ends.** `CitySearching` has two implementations: MapKit for places the catalogue will never hold, and a bundled catalogue of 201 cities for offline use, tests, and previews. A MapKit result only becomes a city if it knows its own time zone; anything else falls through to the catalogue.
 

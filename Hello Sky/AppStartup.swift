@@ -16,6 +16,9 @@ final class AppStartup {
     }
 
     let state: State
+    /// Built whatever happens to the store: weather never fails, so there is
+    /// nothing to recover from here.
+    let weather = WeatherSource.makeRepository()
 
     init() {
         do {

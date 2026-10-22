@@ -17,6 +17,10 @@ let package = Package(
             dependencies: ["SkyCore"],
             resources: [.process("Resources")]
         ),
-        .testTarget(name: "SkyDataTests", dependencies: ["SkyData"]),
+        .testTarget(
+            name: "SkyDataTests",
+            dependencies: ["SkyData"],
+            resources: [.process("Fixtures")]
+        ),
     ]
 )
