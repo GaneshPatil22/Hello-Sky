@@ -2,9 +2,9 @@
 
 Live tracker for Hello Sky. Updated before every commit.
 
-**Current phase:** Phase 4 — Sky renderer
+**Current phase:** Phase 5 — Globe
 **Last updated:** 2026-10-22
-**Overall:** 4 of 9 phases complete · roughly 120 of 248–332 hours
+**Overall:** 4 of 9 phases complete · roughly 140 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
@@ -12,7 +12,7 @@ Phase 1  ██████████  complete
 Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
 Phase 4  █████████░  device profiling left
-Phase 5  ░░░░░░░░░░  not started
+Phase 5  ████░░░░░░  spike passed
 Phase 6  ░░░░░░░░░░  not started
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
@@ -22,12 +22,14 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 4 is built — the sky renders from place, time, weather and look as a pure function, with a gallery and a time slider to judge it by. 142 tests across the four packages.
+**Working on:** Phase 5. The spike passed — RealityKit custom materials work on iOS, so the Metal-view fallback stays unused — and the globe's maths and interaction models are built and tested. What is left is the look: textures, markers on screen, and arcs. 169 tests across the four packages.
 
 **Next three things:**
-1. Look at the gallery and tune the three looks' colour tables. They are placeholders and this is the moment they want a human eye.
-2. Profile the renderer in Instruments on the iPhone 12 Pro, which closes Phase 4.
-3. Start Phase 5, the globe, opening with the RealityKit custom-material spike.
+1. Add the Earth textures. NASA Blue Marble and Black Marble are a manual download; until they are in, the globe is an untextured lit sphere.
+2. Draw the people markers and arcs over the scene, using the projection that is already tested.
+3. Wire the three looks into the material as shader settings, including Ink's dotted style.
+
+**Blocked on:** the Earth textures, which have to be fetched by hand from NASA. Everything else in Phase 5 can proceed without them.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -121,16 +123,18 @@ Phase 8  ░░░░░░░░░░  not started
 
 *Target 46–63 h · the realistic globe, working on its own before it joins the app.*
 
-- [ ] **Spike first:** textured sphere with a custom day/night material in a throwaway project
-- [ ] Day, night, cloud, and specular textures (4096×2048, mipmapped)
-- [ ] Day/night shader driven by `SkyCore` sun direction
+- [x] **Spike:** RealityKit custom material with a Metal surface shader, running on iOS
+- [ ] Day, night, cloud, and specular textures (4096×2048, mipmapped) — manual NASA download
+- [x] Day/night shader driven by `SkyCore` sun direction
 - [ ] Atmosphere glow
-- [ ] Orbit dragging with inertia and slow auto-rotation
-- [ ] People markers projected 3D→screen with tap detection
-- [ ] Arcs between people
+- [x] Orbit dragging with inertia and slow auto-rotation (`GlobeCamera`)
+- [x] 3D→screen projection with back-face culling and edge fading
+- [ ] People markers drawn and tappable
+- [x] Great-circle arc maths
+- [ ] Arcs drawn
 - [ ] Three looks as shader settings
-- [ ] Automatic quality tiers with manual override
-- [ ] Tests: sun direction matches `SkyCore`, day/night line at zero elevation, solstice and equinox checks, texture memory
+- [x] Automatic quality tiers with a manual override (`GlobeQualityGovernor`)
+- [x] Tests: sun direction matches `SkyCore`, day/night line at zero elevation, solstice and equinox checks, texture memory
 
 **Done when:** a test slider moves the day/night line correctly and the globe stays smooth while dragging on the iPhone 12 Pro.
 
@@ -208,6 +212,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | **Spike result:** RealityKit custom materials work on iOS, and SwiftPM compiles `.metal` files inside a package. The globe is RealityKit; the Metal-view fallback is not needed |
+| 2026-10-22 | People markers are SwiftUI overlays projected onto the scene, not 3D entities, so taps, labels and VoiceOver stay ordinary |
+| 2026-10-22 | The quality governor needs four times as much evidence to raise a tier as to drop one, so it cannot flicker |
 | 2026-10-22 | The weather *model* moved to `SkyCore`; providers and the repository stayed in `SkyData`, so `SkyUI` can render weather without depending on where it comes from |
 | 2026-10-22 | Seeded art uses a launch-stable FNV-1a hash, not Swift's per-process `hashValue`, so a city's stars never move between runs |
 | 2026-10-22 | Rendering is tested for determinism and distinctness rather than against golden images, which would churn while the looks are still placeholders |

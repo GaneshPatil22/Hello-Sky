@@ -1,4 +1,5 @@
 import SkyCore
+import Globe
 import SkyData
 import SkyUI
 import SwiftUI
@@ -51,6 +52,9 @@ struct PeopleListView: View {
                 }
                 ToolbarItem(placement: .topBarLeading) {
                     NavigationLink("Gallery", destination: SkyGalleryView())
+                }
+                ToolbarItem(placement: .topBarLeading) {
+                    NavigationLink("Globe", destination: GlobeSpikeView())
                 }
                 #endif
             }
