@@ -80,7 +80,7 @@ extension GlobeProjection {
 
     public enum Layout {
         /// The globe fills most of the shorter side.
-        public static let radiusFraction = 0.42
+        public static let radiusFraction = 0.40
         public static let arcSteps = 48
     }
 }

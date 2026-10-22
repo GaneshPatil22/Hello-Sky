@@ -11,7 +11,7 @@ Open a globe with your people on it. Tap one, and the whole screen becomes their
 ![Device](https://img.shields.io/badge/device-iPhone-lightgrey)
 ![Status](https://img.shields.io/badge/status-Phase%205%20in%20progress-yellow)
 
-> **Status:** early development, but the app now does the thing it is for: a globe with your people on it, and a tap turns the screen into their live sky. The globe has no Earth textures yet, and the signature zoom transition is still to come.
+> **Status:** early development, but the app now does the thing it is for: a globe with your people on it, and a tap turns the screen into their live sky.
 > See [PROGRESS.md](PROGRESS.md) for the live phase-by-phase tracker.
 
 ---
@@ -33,7 +33,7 @@ Eight feature groups ship in v1. All of them work with no account, no server, an
 
 | | Feature | What it does | Status |
 |---|---|---|---|
-| 🌍 | **Globe** | Interactive 3D Earth with a live day/night line, city lights, a 24-hour time slider, and three looks | Working; Earth textures pending |
+| 🌍 | **Globe** | Interactive Earth with a live day/night line, city lights, a 24-hour time slider, and three looks | Working |
 | 👥 | **People** | Add up to 10 people with a name, city, and emoji avatar; editable awake hours; Good time / Maybe / Sleeping status; best-overlap window | Working |
 | 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Working; share card to come |
 | 🌅 | **My sky** | The same screen for your own location or a typed city, with golden hour, blue hour, and moon phase | Working |
@@ -113,6 +113,8 @@ Sun and moon positions come from the low-precision solar model; sunrise and suns
 The repository **cannot fail**: it answers live, then from cache however stale, then with an estimate, which means no screen carries a weather error path. Each reading records where it came from, so an estimate is never shown under a weather service's name, and an estimate reports no temperature rather than inventing one. A contract test suite runs the same assertions against every provider, including a `SharedCacheProvider` stub that exists only to prove a new source needs no change to the repository or to any screen.
 
 **City search falls back, never dead-ends.** `CitySearching` has two implementations: MapKit for places the catalogue will never hold, and a bundled catalogue of 201 cities for offline use, tests, and previews. A MapKit result only becomes a city if it knows its own time zone; anything else falls through to the catalogue.
+
+**The Earth is 32 KB.** The globe has no imagery at all. Continents come from a 1-bit Natural Earth land mask — 720×360 cells in 32,400 bytes — with points scattered evenly over the sphere by the golden angle and kept where the mask says there is land. Shading, city lights and the terminator are computed from `SkyCore`'s sun direction in the Earth's own frame, so turning the globe never changes what time it is anywhere. `Tools/generate-land-mask.py` regenerates the mask.
 
 **The sky is a pure function.** `SkySnapshot` turns a place, a moment, a reading and a look into every value the renderer needs — sun and moon position, the gradient, star visibility, glow strength — and draws nothing. `SkyView` then draws that snapshot. The same four inputs always produce identical pixels, which is what makes the gallery trustworthy and the render tests meaningful. Stars, clouds, hills and rain are placed from a generator seeded by the city's name through a launch-stable hash, so a place always looks like itself.
 

@@ -6,7 +6,10 @@ import simd
 ///
 /// The convention matches the prototype's: +Y is the north pole, and longitude
 /// runs eastward from the +Z meridian.
-public enum GlobeGeometry {
+///
+/// `nonisolated` because the globe's drawing runs off the main actor and this
+/// is arithmetic with no state to protect.
+public nonisolated enum GlobeGeometry {
     public static func vector(for coordinate: Coordinate) -> SIMD3<Float> {
         let latitude = Float(coordinate.latitude * .pi / 180)
         let longitude = Float(coordinate.longitude * .pi / 180)

@@ -32,7 +32,14 @@ extension Theme {
             tint: SkyColor(hex: 0xFFB38A),
             atmosphere: SkyColor(hex: 0xFF8CAA),
             cityLights: SkyColor(hex: 0xFFA8C6),
-            terminatorSoftness: 5.0
+            terminatorSoftness: 5.0,
+            oceanLit: SkyColor(hex: 0x8A5BA0),
+            oceanDeep: SkyColor(hex: 0x1E1040),
+            landNight: SkyColor(hex: 0x42285A),
+            landTerminator: SkyColor(hex: 0xFF707A),
+            landDay: SkyColor(hex: 0xFFCEA0),
+            nightShade: SkyColor(hex: 0x0A0418),
+            graticule: SkyColor(hex: 0xFFD9E6)
         ),
         accent: SkyColor(hex: 0xFF7A9C),
         starTint: SkyColor(hex: 0xFFE2EC),

@@ -36,7 +36,7 @@ struct SkyDetailView: View {
                 header
                 Spacer()
                 SkyFactsCard(person: person, weather: model.weather, date: date)
-                TimeSlider(time: time)
+                TimeSlider(time: time, reference: person)
                 Text(model.attribution.text)
                     .font(.caption2)
                     .foregroundStyle(.white.opacity(Layout.creditOpacity))

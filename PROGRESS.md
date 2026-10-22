@@ -4,7 +4,7 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 5 — Globe
 **Last updated:** 2026-10-22
-**Overall:** 4 of 9 phases complete · roughly 180 of 248–332 hours
+**Overall:** 4 of 9 phases complete · roughly 200 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
@@ -12,7 +12,7 @@ Phase 1  ██████████  complete
 Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
 Phase 4  █████████░  device profiling left
-Phase 5  ███████░░░  textures left
+Phase 5  █████████░  looks left
 Phase 6  ██████░░░░  transition in
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
@@ -25,11 +25,11 @@ Phase 8  ░░░░░░░░░░  not started
 **Working on:** the real screens, brought forward from Phase 6 after the plain stand-ins were judged too bare. The app is now a globe with your people on it, chips along the bottom, a time slider, and a full-screen sky when you tap someone. 169 tests across the four packages.
 
 **Next three things:**
-1. Judge the transition by hand on the device — taps cannot be driven from the command line, so its feel has not been checked by anyone yet.
-2. Earth textures, so the globe shows continents instead of a plain blue sphere.
-3. The three looks wired into the globe material, including Ink's dotted style.
+1. Judge the globe and the transition by hand on the device; only the Realistic look has been looked at.
+2. Check Dusk and Ink, whose globe palettes were written but never seen.
+3. Tune the sky colour tables, still the placeholders from Phase 4.
 
-**Blocked on:** the Earth textures, which have to be fetched by hand from NASA. Nothing else waits on them.
+**Blocked on:** nothing.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -124,15 +124,15 @@ Phase 8  ░░░░░░░░░░  not started
 *Target 46–63 h · the realistic globe, working on its own before it joins the app.*
 
 - [x] **Spike:** RealityKit custom material with a Metal surface shader, running on iOS
-- [ ] Day, night, cloud, and specular textures (4096×2048, mipmapped) — manual NASA download
-- [x] Day/night shader driven by `SkyCore` sun direction
-- [ ] Atmosphere glow
+- [x] Continents from a 32 KB Natural Earth land mask — no imagery, NASA textures dropped
+- [x] Day/night shading driven by `SkyCore` sun direction, with city lights at night
+- [x] Atmosphere glow and a latitude and longitude graticule
 - [x] Orbit dragging with inertia and slow auto-rotation (`GlobeCamera`)
 - [x] 3D→screen projection with back-face culling and edge fading
-- [ ] People markers drawn and tappable
+- [x] People markers drawn as avatar bubbles, tappable, with status and labels
 - [x] Great-circle arc maths
-- [ ] Arcs drawn
-- [ ] Three looks as shader settings
+- [x] Arcs drawn between people
+- [x] Three looks as globe palettes — written, but only Realistic has been seen
 - [x] Automatic quality tiers with a manual override (`GlobeQualityGovernor`)
 - [x] Tests: sun direction matches `SkyCore`, day/night line at zero elevation, solstice and equinox checks, texture memory
 
@@ -212,6 +212,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | **NASA textures dropped.** The globe draws continents from a 32 KB Natural Earth land mask and a scatter of dots, as the prototype does. No imagery, no attribution burden, and all three looks restyle it |
+| 2026-10-22 | The globe moved from RealityKit to a SwiftUI `Canvas`. RealityKit was chosen for a photographic Earth; without textures a drawn globe is simpler and matches the reference. The shader spike is in git history if imagery ever returns |
+| 2026-10-22 | Globe lighting is computed in the Earth's own frame, not the view's, so turning the globe no longer changes what time it is anywhere |
 | 2026-10-22 | The transition is a state machine, so a second tap during a move is refused rather than leaving the globe turning towards one city while another's sky opens |
 | 2026-10-22 | Markers fade against the reveal rather than switching off when the move starts, which had left the globe bare for half a second |
 | 2026-10-22 | **Design direction changed:** the web demo's layout and density are now the reference, executed with Liquid Glass and native type rather than its stylesheet. Replaces the earlier rule that the app should never resemble the demo |

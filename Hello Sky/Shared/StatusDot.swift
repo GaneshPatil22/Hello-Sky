@@ -50,5 +50,7 @@ extension StatusDot {
         static let good = Color(red: 0.384, green: 0.961, blue: 0.639)
         static let maybe = Color(red: 1.0, green: 0.784, blue: 0.341)
         static let sleeping = Color(red: 0.549, green: 0.573, blue: 1.0)
+        /// The ring around whoever is open, matching the look's accent warmth.
+        static let selected = Color(red: 1.0, green: 0.718, blue: 0.420)
     }
 }

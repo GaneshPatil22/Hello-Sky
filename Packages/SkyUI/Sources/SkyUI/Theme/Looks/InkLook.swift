@@ -31,7 +31,14 @@ extension Theme {
             surface: .dotted,
             atmosphere: SkyColor(hex: 0xDCDCE1),
             cityLights: SkyColor(hex: 0xFFFFFF),
-            terminatorSoftness: 1.0
+            terminatorSoftness: 1.0,
+            oceanLit: SkyColor(hex: 0x2A2A2D),
+            oceanDeep: SkyColor(hex: 0x101012),
+            landNight: SkyColor(hex: 0x343438),
+            landTerminator: SkyColor(hex: 0xAAAAAC),
+            landDay: SkyColor(hex: 0xF0F0F0),
+            nightShade: SkyColor(hex: 0x040405),
+            graticule: SkyColor(hex: 0xFFFFFF)
         ),
         accent: SkyColor(hex: 0xFFD60A),
         starTint: SkyColor(hex: 0xFFFFFF),

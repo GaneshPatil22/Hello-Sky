@@ -56,24 +56,42 @@ struct GlobeHomeView: View {
         ZStack {
             backdrop
             StarfieldView(tint: theme.starTint)
-            GlobeSceneView(
-                camera: displayCamera,
-                date: date,
-                isInteractive: !transition.isShowingSky,
-                onCameraChange: { camera = $0 }
-            )
-            GlobeMarkerOverlay(
-                people: store.people,
-                camera: displayCamera,
-                date: date,
-                selected: openedPerson,
-                onSelect: { open($0, in: size) }
-            )
+            // The Earth and its markers share one frame, kept clear of the
+            // chips and the slider, so the globe centres in the space it
+            // actually has rather than behind the controls.
+            VStack(spacing: 0) {
+                Color.clear.frame(height: Layout.topReserve)
+                ZStack {
+                    InteractiveGlobeView(
+                        camera: displayCamera,
+                        date: date,
+                        isInteractive: !transition.isShowingSky,
+                        onCameraChange: { camera = $0 }
+                    )
+                    GlobeMarkerOverlay(
+                        people: store.people,
+                        camera: displayCamera,
+                        date: date,
+                        selected: openedPerson,
+                        onSelect: { open($0, in: globeSize(in: size)) }
+                    )
             // Faded against the reveal rather than switched off when the
             // move starts, which otherwise left the globe bare for half a
             // second before the sky arrived.
-            .opacity(1 - revealProgress)
+                    .opacity(1 - revealProgress)
+                }
+                Color.clear.frame(height: Layout.controlsReserve)
+            }
         }
+    }
+
+    /// The area the globe actually occupies, which is everything above the
+    /// chips and the slider.
+    private func globeSize(in size: CGSize) -> CGSize {
+        CGSize(
+            width: size.width,
+            height: max(size.height - Layout.controlsReserve - Layout.topReserve, 1)
+        )
     }
 
     private func skyLayer(for person: Person, in size: CGSize) -> some View {
@@ -113,7 +131,7 @@ struct GlobeHomeView: View {
             } else {
                 chips
             }
-            TimeSlider(time: time)
+            TimeSlider(time: time, reference: store.people.first)
         }
         .padding(Layout.padding)
         .transition(.opacity)
@@ -202,8 +220,13 @@ struct GlobeHomeView: View {
 
     /// Where the city has ended up, so the circle opens from the right place.
     private func markerPoint(for person: Person, in size: CGSize) -> CGPoint {
-        GlobeProjection.screenPoint(for: person.place.coordinate, camera: displayCamera, size: size)
-            ?? CGPoint(x: size.width / 2, y: size.height / 2)
+        let fallback = CGPoint(x: size.width / 2, y: size.height / 2)
+        let local = GlobeProjection.screenPoint(
+            for: person.place.coordinate, camera: displayCamera, size: size
+        ) ?? fallback
+        // The globe sits below the title, so its own coordinates are that far
+        // down the screen the reveal is masked in.
+        return CGPoint(x: local.x, y: local.y + Layout.topReserve)
     }
 
     // MARK: - Derived
@@ -232,5 +255,9 @@ extension GlobeHomeView {
         static let barCorner: Double = 22
         static let spacing: Double = 12
         static let chipSpacing: Double = 10
+        /// Height kept free at the bottom for the chips and the time card.
+        static let controlsReserve: Double = 340
+        /// Height kept free at the top for the status bar and the title.
+        static let topReserve: Double = 104
     }
 }

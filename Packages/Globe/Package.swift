@@ -16,6 +16,7 @@ let package = Package(
         .target(
             name: "Globe",
             dependencies: ["SkyCore", "SkyUI"],
+            resources: [.process("Resources")],
             swiftSettings: [.defaultIsolation(MainActor.self)]
         ),
         .testTarget(
