@@ -6,6 +6,13 @@
 	objectVersion = 90;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		000000000000000400000001 /* SkyCore in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000001 /* SkyCore */; };
+		000000000000000400000002 /* SkyData in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000002 /* SkyData */; };
+		000000000000000400000003 /* SkyUI in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000003 /* SkyUI */; };
+		000000000000000400000004 /* Globe in Frameworks */ = {isa = PBXBuildFile; productRef = 000000000000000300000004 /* Globe */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		000000000000000000000120 /* Hello Sky.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Hello Sky.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -22,6 +29,10 @@
 		000000000000000130000000 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				000000000000000400000001 /* SkyCore in Frameworks */,
+				000000000000000400000002 /* SkyData in Frameworks */,
+				000000000000000400000003 /* SkyUI in Frameworks */,
+				000000000000000400000004 /* Globe in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -60,6 +71,12 @@
 				000000000000000000000010 /* Hello Sky */,
 			);
 			name = "Hello Sky";
+			packageProductDependencies = (
+				000000000000000300000001 /* SkyCore */,
+				000000000000000300000002 /* SkyData */,
+				000000000000000300000003 /* SkyUI */,
+				000000000000000300000004 /* Globe */,
+			);
 			productName = MyApp;
 			productReference = 000000000000000000000120 /* Hello Sky.app */;
 			productType = "com.apple.product-type.application";
@@ -88,6 +105,12 @@
 			);
 			mainGroup = 000000000000000000000001;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				000000000000000200000001 /* XCLocalSwiftPackageReference "Packages/SkyCore" */,
+				000000000000000200000002 /* XCLocalSwiftPackageReference "Packages/SkyData" */,
+				000000000000000200000003 /* XCLocalSwiftPackageReference "Packages/SkyUI" */,
+				000000000000000200000004 /* XCLocalSwiftPackageReference "Packages/Globe" */,
+			);
 			preferredProjectObjectVersion = 90;
 			productRefGroup = 000000000000000000000020 /* Products */;
 			projectDirPath = "";
@@ -331,6 +354,44 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		000000000000000200000001 /* XCLocalSwiftPackageReference "Packages/SkyCore" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Packages/SkyCore";
+		};
+		000000000000000200000002 /* XCLocalSwiftPackageReference "Packages/SkyData" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Packages/SkyData";
+		};
+		000000000000000200000003 /* XCLocalSwiftPackageReference "Packages/SkyUI" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Packages/SkyUI";
+		};
+		000000000000000200000004 /* XCLocalSwiftPackageReference "Packages/Globe" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "Packages/Globe";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		000000000000000300000001 /* SkyCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SkyCore;
+		};
+		000000000000000300000002 /* SkyData */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SkyData;
+		};
+		000000000000000300000003 /* SkyUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = SkyUI;
+		};
+		000000000000000300000004 /* Globe */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Globe;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 000000000000000000000000 /* Project object */;
 }

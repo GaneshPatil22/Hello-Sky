@@ -4,10 +4,10 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 0 — Foundation
 **Last updated:** 2026-10-22
-**Overall:** 0 of 9 phases complete · roughly 4 of 248–332 hours
+**Overall:** 0 of 9 phases complete · roughly 7 of 248–332 hours
 
 ```
-Phase 0  ███░░░░░░░  in progress
+Phase 0  ███████░░░  in progress
 Phase 1  ░░░░░░░░░░  not started
 Phase 2  ░░░░░░░░░░  not started
 Phase 3  ░░░░░░░░░░  not started
@@ -22,12 +22,12 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 0 foundation — project configuration and documentation are done; the local Swift packages and test targets are not.
+**Working on:** Phase 0 foundation — the four local packages build, test, and link into the app. The theme system, fixtures, and widget extension are not built yet.
 
 **Next three things:**
-1. Add the local Swift packages (`SkyCore`, `SkyData`, `SkyUI`, `Globe`) with a test target each.
-2. Add the empty widget extension target.
-3. Build the `Theme` / `ThemeRegistry` system and the people fixtures.
+1. Build the `Theme` type and `ThemeRegistry` in `SkyUI`, holding the three looks as data.
+2. Add the fixtures folder with the demo's dummy people.
+3. Add the empty widget extension target.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -42,8 +42,10 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Git repository with `.gitignore`
 - [x] `CLAUDE.md` with architecture rules and coding conventions
 - [x] `README.md` with run steps
-- [ ] Local Swift packages: `SkyCore`, `SkyData`, `SkyUI`, `Globe`
-- [ ] A test target in each package
+- [x] Local Swift packages: `SkyCore`, `SkyData`, `SkyUI`, `Globe`
+- [x] A test target in each package
+- [x] Packages linked into the app target
+- [x] `make test` runs every package's tests and builds the app
 - [ ] Empty widget extension target
 - [ ] `Theme` type and `ThemeRegistry` holding the three looks
 - [ ] Fixtures folder with the demo's dummy people
@@ -200,3 +202,5 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Swift 6 language mode enabled, with `MainActor` default isolation |
 | 2026-10-22 | iPhone only — macOS, visionOS, tvOS, and watchOS removed from the project |
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
+| 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
+| 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |

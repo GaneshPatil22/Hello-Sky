@@ -13,19 +13,20 @@ Hello Sky is an iOS app (SwiftUI) that shows a 3D globe of the people you care a
 The project name contains a space, so quote every path and scheme.
 
 ```bash
-# Build
-xcodebuild -project "Hello Sky.xcodeproj" -scheme "Hello Sky" \
-  -destination 'platform=iOS Simulator,name=iPhone 17' build
+make build          # build the app for the simulator
+make test           # all package tests, then the app build
+make test-packages  # package tests only — seconds, no simulator
 
-# Test (no test targets exist yet — this fails until Phase 0 adds them)
-xcodebuild -project "Hello Sky.xcodeproj" -scheme "Hello Sky" \
-  -destination 'platform=iOS Simulator,name=iPhone 17' test
-
-# Single test, once the local packages exist
-swift test --package-path Packages/SkyCore --filter SunPositionTests/testPolarNight
+# One package, or one suite inside it
+swift test --package-path Packages/SkyCore
+swift test --package-path Packages/SkyCore --filter CoordinateTests
 ```
 
-Local Swift packages (`SkyCore`, `SkyData`, `SkyUI`, `Globe`) are meant to be testable with `swift test` without launching the app — prefer that over `xcodebuild test` for logic work.
+Prefer `swift test --package-path` over `xcodebuild test` for logic work — it runs in seconds with no simulator. Note that it builds for the **host (macOS)**, not iOS, so anything touching an iOS-only API needs an `xcodebuild -destination 'platform=iOS Simulator,...'` run instead.
+
+Packages use `swift-tools-version: 6.4`, which is what makes the `.iOS(.v27)` platform value available. `SkyUI` and `Globe` set `.defaultIsolation(MainActor.self)` to match the app target; `SkyCore` and `SkyData` stay nonisolated so their work can run off the main actor.
+
+Tests use **Swift Testing** (`import Testing`, `@Suite`, `@Test`, `#expect`), not XCTest.
 
 The `.xcodeproj` uses synchronized file groups (`objectVersion = 90`). **Adding a file to the `Hello Sky/` folder adds it to the target automatically** — never hand-edit `project.pbxproj` to register sources.
 

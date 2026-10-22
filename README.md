@@ -11,7 +11,7 @@ Open a globe with your people on it. Tap one, and the whole screen becomes their
 ![Device](https://img.shields.io/badge/device-iPhone-lightgrey)
 ![Status](https://img.shields.io/badge/status-Phase%200%20in%20progress-yellow)
 
-> **Status:** early development. The project builds and runs, but no features are implemented yet.
+> **Status:** early development, Phase 0. The module structure is in place and tested; no features are implemented yet.
 > See [PROGRESS.md](PROGRESS.md) for the live phase-by-phase tracker.
 
 ---
@@ -69,13 +69,18 @@ open "Hello Sky.xcodeproj"
 Or from the command line:
 
 ```bash
-# Build
-xcodebuild -project "Hello Sky.xcodeproj" -scheme "Hello Sky" \
-  -destination 'platform=iOS Simulator,name=iPhone 17' build
+make build   # build the app for the simulator
+make test    # run every package's tests, then build the app
+make clean
+```
 
-# Test
-xcodebuild -project "Hello Sky.xcodeproj" -scheme "Hello Sky" \
-  -destination 'platform=iOS Simulator,name=iPhone 17' test
+`make test` is the one command referenced below — it runs the test suite of all four local packages and then builds the app target.
+
+To work on a single package in isolation:
+
+```bash
+swift test --package-path Packages/SkyCore
+swift test --package-path Packages/SkyCore --filter CoordinateTests
 ```
 
 No package manager step and no secrets file — the project has no third-party dependencies, and development builds use a mock weather provider by default.
@@ -85,6 +90,8 @@ No package manager step and no secrets file — the project has no third-party d
 ## Architecture
 
 The app is split into local Swift packages so each phase can be built and tested without launching the whole app.
+
+All four live under `Packages/` as local Swift packages and are linked into the app target.
 
 | Module | Owns | Depends on |
 |---|---|---|
