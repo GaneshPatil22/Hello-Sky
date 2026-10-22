@@ -1,0 +1,18 @@
+import SwiftUI
+
+struct RootView: View {
+    let startup: AppStartup
+
+    var body: some View {
+        switch startup.state {
+        case .ready(let store):
+            PeopleListView(store: store)
+        case .failed(let reason):
+            ContentUnavailableView(
+                "Can't open your people",
+                systemImage: "exclamationmark.triangle",
+                description: Text(reason)
+            )
+        }
+    }
+}

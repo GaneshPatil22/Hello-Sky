@@ -2,14 +2,14 @@
 
 Live tracker for Hello Sky. Updated before every commit.
 
-**Current phase:** Phase 1 — Sky engine
+**Current phase:** Phase 2 — People and storage
 **Last updated:** 2026-10-22
-**Overall:** 1 of 9 phases complete · roughly 33 of 248–332 hours
+**Overall:** 2 of 9 phases complete · roughly 57 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
 Phase 1  ██████████  complete
-Phase 2  ░░░░░░░░░░  not started
+Phase 2  █████████░  UI test deferred
 Phase 3  ░░░░░░░░░░  not started
 Phase 4  ░░░░░░░░░░  not started
 Phase 5  ░░░░░░░░░░  not started
@@ -22,12 +22,12 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** Phase 1 is complete — the astronomy, time, status, and overlap logic are all in `SkyCore` with 49 tests, checked against `astral` across nine cities and eight dates. Worst disagreement is 67 seconds, at Reykjavik's summer solstice.
+**Working on:** Phase 2 is built — people persist, a plain list shows the right local time and status for each, and a 201-city catalogue backs offline search. 91 tests across the four packages.
 
 **Next three things:**
-1. Install on the iPhone 12 Pro with a free Apple ID, the one Phase 0 item left. *(Needs the device; the simulator cannot prove signing.)*
-2. Start Phase 2, 3, 4, or 5 — they can run in any order now that Phase 1 is done.
-3. Phase 4 (sky renderer) is the natural next one: it turns the engine and the look system into something visible.
+1. Start Phase 3, the weather layer: `SkyWeather`, the provider protocol, and the repository.
+2. Install on the iPhone 12 Pro with a free Apple ID, the one Phase 0 item left.
+3. Add an app UI-test target when Phase 6 builds the real screens, and move the deferred "add Tokyo" check there.
 
 **Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
 
@@ -74,12 +74,14 @@ Phase 8  ░░░░░░░░░░  not started
 
 *Target 20–28 h · add, edit, and remove people with correct local time and call status.*
 
-- [ ] SwiftData model for a person
-- [ ] City search with MapKit local search
-- [ ] Bundled list of ~200 cities for offline use and tests
-- [ ] Debug seeding from mock fixtures
-- [ ] Status and overlap computed by `SkyCore`
-- [ ] Tests: model mapping, schema migration, in-memory store, UI test adding Tokyo
+- [x] SwiftData model for a person, with a versioned schema and migration plan
+- [x] City search with MapKit local search, falling back to the catalogue
+- [x] Bundled list of 201 cities for offline use and tests
+- [x] Debug seeding from mock fixtures
+- [x] Status and overlap computed by `SkyCore`
+- [x] A plain list screen showing local time and call status
+- [x] Tests: model mapping, lightweight schema migration, in-memory store, relaunch persistence
+- [ ] UI test that adds Tokyo — deferred to Phase 6, when real screens exist. The same check runs today as a store-level test (`tokyoReadsCorrectly`)
 
 **Done when:** people survive a relaunch and the list shows correct times for every test city.
 
@@ -204,6 +206,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-22 | `StoredPerson` has defaults on every property and no unique attributes, so v2's iCloud sync needs no migration |
+| 2026-10-22 | The avatar is stored as kind plus value, so photo avatars in v2 add a kind rather than change the schema |
+| 2026-10-22 | A row that cannot be read — unknown avatar kind or time zone — is skipped, not deleted; a later version may understand it |
 | 2026-10-22 | Sunrise and sunset are found by a 5-minute scan plus 14 bisections, matching `astral` to within 67 seconds |
 | 2026-10-22 | Polar day and night are reported as an absence of events, so callers cannot assume a sunrise is coming |
 | 2026-10-22 | Packages declare `.macOS(.v26)` alongside `.iOS(.v27)` so `swift test` runs on the host; the shipping app stays iPhone-only |

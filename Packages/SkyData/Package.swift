@@ -12,7 +12,11 @@ let package = Package(
         .package(path: "../SkyCore")
     ],
     targets: [
-        .target(name: "SkyData", dependencies: ["SkyCore"]),
+        .target(
+            name: "SkyData",
+            dependencies: ["SkyCore"],
+            resources: [.process("Resources")]
+        ),
         .testTarget(name: "SkyDataTests", dependencies: ["SkyData"]),
     ]
 )

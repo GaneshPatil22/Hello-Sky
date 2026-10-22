@@ -1,9 +1,12 @@
 import SwiftUI
 
-@main struct MyApp: App {
+@main
+struct MyApp: App {
+    @State private var startup = AppStartup()
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView(startup: startup)
         }
     }
 }
