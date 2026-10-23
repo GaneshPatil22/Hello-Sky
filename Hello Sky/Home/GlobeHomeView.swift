@@ -156,7 +156,8 @@ struct GlobeHomeView: View {
     }
 
     private func skyLayer(for person: Person, in size: CGSize) -> some View {
-        SkyDetailView(person: person, weather: weather, time: time, onClose: close)
+        SkyDetailView(person: person, home: homePerson, weather: weather, time: time,
+                      settings: settings, onClose: close)
             .modifier(CircularReveal(
                 progress: revealProgress,
                 origin: revealOrigin ?? CGPoint(x: size.width / 2, y: size.height / 2),

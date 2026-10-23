@@ -61,3 +61,33 @@ struct SkyCardTests {
         #expect(Array(data.prefix(4)) == [0x89, 0x50, 0x4E, 0x47])
     }
 }
+
+@MainActor
+@Suite("Clock splitting")
+struct ClockSplitTests {
+    @Test("Sets the period apart from the time")
+    func splitsPeriod() {
+        #expect(SkyHeadline.split("9:20 AM").time == "9:20")
+        #expect(SkyHeadline.split("9:20 AM").period == "AM")
+        #expect(SkyHeadline.split("11:14 pm").period == "pm")
+    }
+
+    @Test("Handles the narrow space some locales use")
+    func splitsNarrowSpace() {
+        // U+202F, which a plain " AM" check misses.
+        let narrow = "9:20\u{202F}AM"
+        #expect(SkyHeadline.split(narrow).time == "9:20")
+        #expect(SkyHeadline.split(narrow).period == "AM")
+    }
+
+    @Test("A 24-hour clock has no period to separate")
+    func leavesTwentyFourHourAlone() {
+        #expect(SkyHeadline.split("21:14").period == nil)
+        #expect(SkyHeadline.split("21:14").time == "21:14")
+    }
+
+    @Test("Does not mistake part of a time for a period")
+    func ignoresNumbers() {
+        #expect(SkyHeadline.split("9 20").period == nil)
+    }
+}

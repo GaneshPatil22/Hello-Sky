@@ -4,7 +4,7 @@ Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 7 — Widgets and alerts
 **Last updated:** 2026-10-23
-**Overall:** 7 of 9 phases complete · roughly 245 of 248–332 hours
+**Overall:** 7 of 9 phases complete · roughly 252 of 248–332 hours
 
 ```
 Phase 0  ██████████  complete
@@ -22,7 +22,7 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** nothing. Phases 0 to 6 are done and checked on the device, which means v1's whole shape exists: the globe, the people, the weather, the sky, the signature transition, the share card and the settings. 232 tests, 22 of them in the app itself.
+**Working on:** nothing. Phases 0 to 6 are done and checked on the device. The sky screen now carries the sun's arc, the shared waking hours, and a sunrise or sunset reminder. 244 tests, 34 of them in the app itself.
 
 **Next three things:**
 1. Enrol in the Apple Developer Program, which is what Phase 7 waits on.
@@ -154,6 +154,7 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Share card through `ImageRenderer`, rendered only when shared
 - [x] About and credits screen, reading its weather credit from the provider
 - [x] An app test target, covering the clock, the settings, adding a person and the card
+- [x] The sky screen: sun arc, overlap bars, weather chips, and a sunrise or sunset reminder
 
 **Done when:** every flow works with real astronomy, mock weather, and the real globe.
 
@@ -165,7 +166,7 @@ Phase 8  ░░░░░░░░░░  not started
 - [ ] Shared store in an App Group container
 - [ ] WidgetKit timeline provider built from `SkyCore`
 - [ ] Small, medium, and Lock Screen widgets
-- [ ] Local notifications for sunrise and sunset
+- [~] Local notifications for sunrise and sunset — one can be set by hand from a sky; the scheduled rolling window is still Phase 7
 - [ ] Rolling notification window under the 64 pending cap
 - [ ] Tapping a widget or notification opens that person's sky
 
@@ -217,6 +218,8 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | Sunrise and sunset reminders are local notifications, which need no paid account, so one can be set by hand from a sky before Phase 7 builds the rolling schedule |
+| 2026-10-23 | At night the sun waits at the start of its arc when a sunrise is next, so the card reads as the day ahead rather than one just finished |
 | 2026-10-23 | The share card is a `Transferable` rather than an `Image`, so the render happens when someone shares rather than on every frame of a screen that redraws constantly |
 | 2026-10-23 | The credits screen reads its weather credit from the provider, so changing source changes the credit and the app cannot credit a service it no longer uses |
 | 2026-10-23 | NASA and EUMETSAT credits are out of the plan along with the imagery; Natural Earth is in |

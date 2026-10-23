@@ -10,7 +10,7 @@ import SwiftUI
 struct MySkyView: View {
     let store: PeopleStore
     let weather: WeatherRepository
-    let settings: AppSettings
+    @Bindable var settings: AppSettings
 
     @State private var time = TimeTravel()
 
@@ -24,7 +24,7 @@ struct MySkyView: View {
 
     var body: some View {
         if let you = home {
-            SkyDetailView(person: you, weather: weather, time: time)
+            SkyDetailView(person: you, home: you, weather: weather, time: time, settings: settings)
         } else {
             ContentUnavailableView(
                 "No sky yet",

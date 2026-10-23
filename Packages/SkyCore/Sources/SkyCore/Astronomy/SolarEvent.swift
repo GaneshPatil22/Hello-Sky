@@ -9,4 +9,9 @@ public struct SolarEvent: Hashable, Sendable {
 
     public let kind: Kind
     public let date: Date
+
+    public init(kind: Kind, date: Date) {
+        self.kind = kind
+        self.date = date
+    }
 }

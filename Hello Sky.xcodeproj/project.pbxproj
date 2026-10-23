@@ -125,6 +125,7 @@
 			isa = PBXGroup;
 			children = (
 				000000000000000000000011 /* HelloSkyWidgets */,
+				000000000000000000000012 /* HelloSkyTests */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -577,7 +578,7 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hello Sky.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hello Sky";
 			};
 			name = Debug;
@@ -599,7 +600,7 @@
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 6.0;
-				TARGETED_DEVICE_FAMILY = "1";
+				TARGETED_DEVICE_FAMILY = 1;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Hello Sky.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Hello Sky";
 			};
 			name = Release;
@@ -634,10 +635,9 @@
 		000000000000000310000000 /* Build configuration list for PBXNativeTarget "HelloSkyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				000000000000000311000000 /* Debug */,
-				000000000000000312000000 /* Release */,
+				000000000000000311000000 /* Debug configuration for PBXNativeTarget "HelloSkyTests" */,
+				000000000000000312000000 /* Release configuration for PBXNativeTarget "HelloSkyTests" */,
 			);
-			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
