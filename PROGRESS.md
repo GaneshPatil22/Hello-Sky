@@ -3,8 +3,8 @@
 Live tracker for Hello Sky. Updated before every commit.
 
 **Current phase:** Phase 5 — Globe
-**Last updated:** 2026-10-22
-**Overall:** 4 of 9 phases complete · roughly 215 of 248–332 hours
+**Last updated:** 2026-10-23
+**Overall:** 4 of 9 phases complete, 3 nearly · roughly 230 of 248–332 hours
 
 ```
 Phase 0  █████████░  device install left
@@ -13,7 +13,7 @@ Phase 2  █████████░  UI test deferred
 Phase 3  ██████████  complete
 Phase 4  █████████░  device profiling left
 Phase 5  █████████░  looks left
-Phase 6  ███████░░░  settings in
+Phase 6  ████████░░  share card left
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
 ```
@@ -22,20 +22,18 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** the real screens, brought forward from Phase 6 after the plain stand-ins were judged too bare. The app is now a globe with your people on it, chips along the bottom, a time slider, and a full-screen sky when you tap someone. 169 tests across the four packages.
+**Working on:** the app does what it is for. A globe with your people on it, arcs from home with lights travelling along them, a time slider that the day/night line follows, and a tap that turns the screen into someone's live sky. 210 tests across the four packages.
 
 **Next three things:**
-1. Judge the globe, arcs and transition by hand on the device.
-2. Check Dusk and Ink, whose globe palettes are reachable from the Look sheet but have never been looked at.
-3. Decide the two open questions below.
+1. Judge it by hand on the device: the transition's timing, the drift's smoothness, the wind-back, and the two looks nobody has seen.
+2. Finish Phase 6 — the share card and the credits screen are what is left of it.
+3. Decide the two open questions below, then start Phase 7, which needs the paid developer account.
 
 **Open questions:**
 - The title says **Hello Sky**, not "Same Sky" as the reference screenshots do. Same Sky was the prototype's name; the product name was settled as Hello Sky in section 0 of the plan. Say which should win.
 - The reference tab bar reads Globe / My sky / **Widgets**. Ours keeps **People**, because widgets do not exist until Phase 7 and a tab leading to nothing is worse than one that works. The bar's styling now matches the reference either way.
 
-**Blocked on:** nothing.
-
-**Blocked on:** the web demo HTML file is not in this repository. Phase 0 needs its dummy people for fixtures, and Phase 1 needs its JavaScript astronomy as the port reference.
+**Blocked on:** Phase 7 onward needs the paid Apple Developer Program, for App Groups, WeatherKit and TestFlight. Nothing before that is blocked.
 
 ---
 
@@ -149,11 +147,13 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Navigation state machine (`SkyTransition`), refusing a second tap mid-move
 - [x] The zoom-and-reveal transition (camera turn plus circular mask), with a Reduce Motion crossfade
 - [x] One shared time model with offset
-- [ ] Their sky and My sky screens
+- [x] Their sky and My sky screens
+- [x] Add-person, Look and Settings sheets
+- [x] A home person, which every arc starts from
+- [x] Tests: the transition state machine, and the reveal geometry
 - [ ] Share card through `ImageRenderer`
-- [ ] Add-person, looks, and settings sheets
 - [ ] About and credits screen
-- [ ] Tests: state machine, UI open/close, Reduce Motion path, 50× open/close leak check
+- [ ] Tests: UI open/close, and a 50× open/close leak check — both need an app test target
 
 **Done when:** every flow works with real astronomy, mock weather, and the real globe.
 
