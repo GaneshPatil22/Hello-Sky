@@ -27,6 +27,69 @@ struct AddPersonModelTests {
         #expect(model.canAdd)
     }
 
+    @Test("Says what is still missing")
+    func explainsWhatIsMissing() {
+        let model = makeModel()
+        #expect(model.blocker == "Choose a city first.")
+
+        model.select(tokyo())
+        model.name = "  "
+        #expect(model.blocker == "Give them a name.")
+
+        model.name = "Kenji"
+        #expect(model.blocker == nil)
+
+        model.awakeStart = 22
+        model.awakeEnd = 6
+        #expect(model.blocker?.contains("start before") == true)
+    }
+
+    @Test("Summarises how long they are awake")
+    func summarisesAwakeHours() {
+        let model = makeModel()
+        model.awakeStart = 8
+        model.awakeEnd = 23
+        #expect(model.awakeSummary == "Awake for 15 hours")
+
+        model.awakeEnd = 6
+        #expect(model.awakeSummary == "That is not a day.")
+    }
+
+    @Test("Changing the city goes back to searching with the text intact")
+    func changingCityKeepsTheText() {
+        let model = makeModel()
+        model.select(tokyo())
+        #expect(model.query == tokyo().qualifiedName)
+
+        model.changeCity()
+        #expect(model.selectedCity == nil)
+        #expect(model.query == tokyo().qualifiedName, "the text should still be there to edit")
+    }
+
+    @Test("An empty search clears the results rather than searching for nothing")
+    func emptyQueryClears() async {
+        let model = makeModel()
+        model.query = "Tokyo"
+        await model.search()
+        #expect(!model.results.isEmpty)
+
+        model.query = "   "
+        await model.search()
+        #expect(model.results.isEmpty)
+        #expect(!model.hasSearched)
+    }
+
+    @Test("Reports when a search found nothing, but not before it has run")
+    func reportsEmptyResults() async {
+        let model = makeModel()
+        #expect(!model.hasSearched, "nothing should be reported before a search")
+
+        model.query = "Zzzyxborough"
+        await model.search()
+        #expect(model.hasSearched)
+        #expect(model.results.isEmpty)
+    }
+
     @Test("Choosing a city suggests its name")
     func cityFillsTheName() {
         let model = makeModel()

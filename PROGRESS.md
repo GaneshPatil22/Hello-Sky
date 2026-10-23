@@ -218,6 +218,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The add-person form asks for the city first, because it decides the clock and suggests the name, and the keyboard moves itself on once a city is chosen |
+| 2026-10-23 | City search is debounced by 250ms, and a slow result that arrives after the text has moved on is discarded |
+| 2026-10-23 | A sky shown as a tab takes a `onBack` closure; its back button had nothing to dismiss and did nothing at all |
 | 2026-10-23 | The accent takes the sky's **hue**, not its lightness, and follows whatever is lighting the place: the sky by day, the low sun at dawn and dusk, moonlight at night |
 | 2026-10-23 | `sunGlow` returned 0 below −6° while still at full strength just above it — a step of 1.0 that snapped the halo and everything coloured from it. Both ends now fade |
 | 2026-10-23 | The turn and the reveal run off one stepped tween. As two SwiftUI animations the globe jumped to the end while the markers slid after it, because a canvas draws from the value at that instant |

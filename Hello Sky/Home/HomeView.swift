@@ -49,7 +49,7 @@ struct HomeView: View {
                 isSkyShowing: $isTabBarHidden
             )
         case .mySky:
-            MySkyView(store: store, weather: weather, settings: settings)
+            MySkyView(store: store, weather: weather, settings: settings) { tab = .globe }
         case .people:
             PeopleListView(store: store, weather: weather)
         }

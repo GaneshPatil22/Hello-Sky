@@ -11,6 +11,9 @@ struct MySkyView: View {
     let store: PeopleStore
     let weather: WeatherRepository
     @Bindable var settings: AppSettings
+    /// Where the back button goes. A sky shown as a tab has nothing to dismiss,
+    /// so without this the button did nothing at all.
+    let onBack: () -> Void
 
     @State private var time = TimeTravel()
 
@@ -24,7 +27,8 @@ struct MySkyView: View {
 
     var body: some View {
         if let you = home {
-            SkyDetailView(person: you, home: you, weather: weather, time: time, settings: settings)
+            SkyDetailView(person: you, home: you, weather: weather, time: time,
+                          settings: settings, onClose: onBack)
         } else {
             ContentUnavailableView(
                 "No sky yet",

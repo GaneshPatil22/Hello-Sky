@@ -19,6 +19,10 @@ final class AddPersonModel {
     private(set) var results: [City] = []
     private(set) var selectedCity: City?
     private(set) var failure: String?
+    /// True while a search is in flight, so the field can say so.
+    private(set) var isSearching = false
+    /// True once a search has run and found nothing.
+    private(set) var hasSearched = false
 
     private let search: any CitySearching
 
@@ -26,29 +30,69 @@ final class AddPersonModel {
         self.search = search
     }
 
+    var trimmedName: String {
+        name.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    var awakeHours: AwakeHours {
+        AwakeHours(start: awakeStart, end: awakeEnd)
+    }
+
     var canAdd: Bool {
-        selectedCity != nil
-            && !name.trimmingCharacters(in: .whitespaces).isEmpty
-            && AwakeHours(start: awakeStart, end: awakeEnd).isValid
+        selectedCity != nil && !trimmedName.isEmpty && awakeHours.isValid
+    }
+
+    /// Why Add is not available yet, for a line under the button.
+    var blocker: String? {
+        if selectedCity == nil { return "Choose a city first." }
+        if trimmedName.isEmpty { return "Give them a name." }
+        if !awakeHours.isValid { return "Waking hours have to start before they end." }
+        return nil
     }
 
     var startLabel: String { Self.hourLabel(awakeStart) }
     var endLabel: String { Self.hourLabel(awakeEnd) }
 
+    /// "Awake for 15 hours", so the two pickers add up to something readable.
+    var awakeSummary: String {
+        guard awakeHours.isValid else { return "That is not a day." }
+        let hours = awakeHours.duration
+        let whole = hours == hours.rounded() ? String(Int(hours)) : String(format: "%.1f", hours)
+        return "Awake for \(whole) hours"
+    }
+
     func search() async {
-        guard selectedCity == nil else { return }
-        results = (try? await search.cities(matching: query)) ?? []
+        let wanted = query.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !wanted.isEmpty else {
+            results = []
+            hasSearched = false
+            return
+        }
+
+        isSearching = true
+        defer { isSearching = false }
+        let found = (try? await search.cities(matching: wanted)) ?? []
+        // A slow search finishing after the text has moved on must not replace
+        // results for what is now on screen.
+        guard wanted == query.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
+        results = found
+        hasSearched = true
     }
 
     func select(_ city: City) {
         selectedCity = city
-        if name.isEmpty { name = city.name }
-        query = ""
+        if trimmedName.isEmpty { name = city.name }
+        query = city.qualifiedName
         results = []
+        hasSearched = false
+        failure = nil
     }
 
-    func clearCity() {
+    /// Goes back to searching, keeping what was typed so it can be edited.
+    func changeCity() {
         selectedCity = nil
+        results = []
+        hasSearched = false
     }
 
     /// Returns whether the person was added; sets `failure` when not.
@@ -56,10 +100,10 @@ final class AddPersonModel {
         guard let city = selectedCity else { return false }
         do {
             try store.add(
-                name: name.trimmingCharacters(in: .whitespaces),
+                name: trimmedName,
                 avatar: .emoji(avatarEmoji),
                 city: city,
-                awakeHours: AwakeHours(start: awakeStart, end: awakeEnd)
+                awakeHours: awakeHours
             )
             failure = nil
             return true
@@ -80,13 +124,21 @@ final class AddPersonModel {
         }
     }
 
-    private static func hourLabel(_ hour: Double) -> String {
+    static func hourLabel(_ hour: Double) -> String {
         var components = DateComponents()
-        components.hour = Int(hour)
+        components.hour = Int(hour) % 24
         components.minute = Int((hour - Double(Int(hour))) * 60)
         let date = Calendar.current.date(from: components) ?? .now
-        return date.formatted(.dateTime.hour().minute())
+        // Midnight at the end of a day reads better as the end than the start.
+        let text = date.formatted(.dateTime.hour().minute())
+        return hour == 24 ? "Midnight" : text
     }
 
-    static let avatarChoices = ["🙂", "🦊", "🐼", "🌻", "🎸", "🚀", "🐢", "🍜", "🧢", "🎧", "👩", "🧔"]
+    /// The hours someone can pick from, on the hour and the half hour.
+    static let hourChoices: [Double] = stride(from: 0.0, through: 24.0, by: 0.5).map { $0 }
+
+    static let avatarChoices = [
+        "🙂", "🦊", "🐼", "🌻", "🎸", "🚀", "🐢", "🍜",
+        "🧢", "🎧", "👩", "🧔", "🪁", "🌴", "🦒", "🐙",
+    ]
 }
