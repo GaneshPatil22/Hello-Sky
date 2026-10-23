@@ -58,7 +58,7 @@ struct GlobeHomeView: View {
                 .presentationDetents([.height(LookSheet.preferredHeight)])
         }
         .sheet(isPresented: $isShowingSettings) {
-            SettingsSheet(settings: settings, store: store)
+            SettingsSheet(settings: settings, store: store, weather: weather)
                 .presentationDetents([.medium])
         }
         .onChange(of: transition.isShowingSky) { _, showing in

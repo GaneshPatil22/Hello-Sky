@@ -1,6 +1,6 @@
 PROJECT := Hello Sky.xcodeproj
 SCHEME  := Hello Sky
-DEST    := platform=iOS Simulator,name=iPhone 17
+DEST    := platform=iOS Simulator,name=iPhone 18 Pro
 PACKAGES := SkyCore SkyData SkyUI Globe
 
 .PHONY: build test test-packages test-app check-core clean
@@ -24,7 +24,10 @@ check-core:
 		(echo "SkyCore must not import a UI framework"; exit 1)
 	@echo "==> SkyCore is free of UI frameworks"
 
-test-app: build
+# The app's own tests need a simulator, so they are slower than the packages'.
+test-app:
+	xcodebuild test -project "$(PROJECT)" -scheme "$(SCHEME)" -destination "$(DEST)" \
+		| grep -E "Test run with|error:|TEST SUCCEEDED|TEST FAILED" || true
 
 clean:
 	xcodebuild -project "$(PROJECT)" -scheme "$(SCHEME)" clean

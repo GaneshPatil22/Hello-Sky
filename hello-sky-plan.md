@@ -230,9 +230,9 @@ If a user tracks 5 places and each refreshes 8 times a day, that is about 1,200 
 | --- | --- | --- |
 | Apple Weather (WeatherKit) | Apple requires any app that displays its weather data to [clearly display the Apple Weather mark and a legal link](https://developer.apple.com/weatherkit/) | Inside the app, beside the weather data |
 | Open-Meteo (development builds only) | Credit "Weather data by Open-Meteo.com" with a link | Inside the app, beside the weather data |
-| EUMETSAT cloud data | "Contains modified EUMETSAT data" | Credits screen and website |
-| NASA Blue Marble and Black Marble | Credit NASA as a courtesy; do not use NASA logos | Credits screen and website |
-| Backup textures, if used | Solar System Scope credit under CC BY 4.0 | Credits screen and website |
+| Natural Earth | Public domain; a courtesy credit for the coastline data the globe's land mask is built from | Credits screen and website |
+
+**No imagery is used.** The globe draws its continents from a 1-bit land mask rather than photographs, so the NASA Blue Marble and Black Marble textures, the EUMETSAT cloud snapshot, and the Solar System Scope fallback are all out of v1 along with their credits. If photographic Earth ever returns, their requirements return with it.
 
 The app gets an About and credits screen in Phase 6; the Apple Weather mark and legal link are added in Phase 8 when WeatherKit data first appears.
 

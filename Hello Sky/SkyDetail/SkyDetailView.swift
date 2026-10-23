@@ -56,10 +56,20 @@ struct SkyDetailView: View {
                 Text(person.name)
                     .font(.title3.weight(.medium))
                 Spacer()
+                ShareLink(
+                    item: card,
+                    preview: SharePreview(SkyCard.title(for: person))
+                ) {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .labelStyle(.iconOnly)
+                .padding(Layout.closePadding)
+                .panel(cornerRadius: Layout.closePadding * 2)
+                .accessibilityLabel("Share this sky")
                 Button("Close", systemImage: "chevron.down", action: close)
                     .labelStyle(.iconOnly)
                     .padding(Layout.closePadding)
-                    .glassEffect(in: .circle)
+                    .panel(cornerRadius: Layout.closePadding * 2)
             }
             Text(timeText)
                 .font(.system(size: Layout.clockSize, weight: .thin, design: .rounded))
@@ -90,6 +100,18 @@ struct SkyDetailView: View {
     }
 
     private var date: Date { time.date() }
+
+    /// What gets shared. Describes the card rather than being one, so nothing
+    /// is rendered until the share sheet asks for it.
+    private var card: SkyCardTransfer {
+        SkyCardTransfer(
+            person: person,
+            weather: model.weather,
+            date: date,
+            theme: theme,
+            locale: locale
+        )
+    }
 
     /// Weather is hourly, so reloading is keyed to the hour rather than to
     /// `date`, which changes on every frame and would restart the task forever.

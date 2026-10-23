@@ -6,6 +6,7 @@ import SwiftUI
 struct SettingsSheet: View {
     @Bindable var settings: AppSettings
     let store: PeopleStore
+    let weather: WeatherRepository
 
     var body: some View {
         NavigationStack {
@@ -26,6 +27,12 @@ struct SettingsSheet: View {
                     Toggle("24-hour time", isOn: $settings.usesTwentyFourHourTime)
                     Toggle("Temperatures in °F", isOn: $settings.usesFahrenheit)
                     Toggle("Reduce motion", isOn: $settings.prefersReducedMotion)
+                }
+
+                Section {
+                    NavigationLink("About and credits") {
+                        AboutView(weather: weather)
+                    }
                 }
 
                 #if DEBUG

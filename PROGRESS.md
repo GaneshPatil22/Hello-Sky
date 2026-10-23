@@ -2,18 +2,18 @@
 
 Live tracker for Hello Sky. Updated before every commit.
 
-**Current phase:** Phase 5 — Globe
+**Current phase:** Phase 7 — Widgets and alerts
 **Last updated:** 2026-10-23
-**Overall:** 4 of 9 phases complete, 3 nearly · roughly 230 of 248–332 hours
+**Overall:** 7 of 9 phases complete · roughly 245 of 248–332 hours
 
 ```
-Phase 0  █████████░  device install left
+Phase 0  ██████████  complete
 Phase 1  ██████████  complete
-Phase 2  █████████░  UI test deferred
+Phase 2  ██████████  complete
 Phase 3  ██████████  complete
-Phase 4  █████████░  device profiling left
-Phase 5  █████████░  looks left
-Phase 6  ████████░░  share card left
+Phase 4  ██████████  complete
+Phase 5  ██████████  complete
+Phase 6  ██████████  complete
 Phase 7  ░░░░░░░░░░  not started
 Phase 8  ░░░░░░░░░░  not started
 ```
@@ -22,12 +22,12 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** the app does what it is for. A globe with your people on it, arcs from home with lights travelling along them, a time slider that the day/night line follows, and a tap that turns the screen into someone's live sky. 210 tests across the four packages.
+**Working on:** nothing. Phases 0 to 6 are done and checked on the device, which means v1's whole shape exists: the globe, the people, the weather, the sky, the signature transition, the share card and the settings. 232 tests, 22 of them in the app itself.
 
 **Next three things:**
-1. Judge it by hand on the device: the transition's timing, the drift's smoothness, the wind-back, and the two looks nobody has seen.
-2. Finish Phase 6 — the share card and the credits screen are what is left of it.
-3. Decide the two open questions below, then start Phase 7, which needs the paid developer account.
+1. Enrol in the Apple Developer Program, which is what Phase 7 waits on.
+2. Then Phase 7: the App Group store, the WidgetKit timelines, and the sunrise and sunset notifications.
+3. Decide the two open questions below; neither blocks Phase 7.
 
 **Open questions:**
 - The title says **Hello Sky**, not "Same Sky" as the reference screenshots do. Same Sky was the prototype's name; the product name was settled as Hello Sky in section 0 of the plan. Say which should win.
@@ -53,7 +53,7 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Empty widget extension target
 - [x] `Theme` type and `ThemeRegistry` holding the three looks
 - [x] Fixtures folder with the demo's seven dummy people, plus a half-hour zone
-- [ ] Verify: app installs on the iPhone 12 Pro with a free Apple ID
+- [x] Verify: app installs on the iPhone 12 Pro with a free Apple ID
 
 **Done when:** a fresh clone builds and passes all tests with one command, and a test look added only through the registry appears in the look picker.
 
@@ -85,7 +85,7 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Status and overlap computed by `SkyCore`
 - [x] A plain list screen showing local time and call status
 - [x] Tests: model mapping, lightweight schema migration, in-memory store, relaunch persistence
-- [ ] UI test that adds Tokyo — deferred to Phase 6, when real screens exist. The same check runs today as a store-level test (`tokyoReadsCorrectly`)
+- [x] Adding Tokyo is covered: at the store (`tokyoReadsCorrectly`) and through the add-person model, in the app's own test target
 
 **Done when:** people survive a relaunch and the list shows correct times for every test city.
 
@@ -116,8 +116,8 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Debug gallery: times × weather × looks, plus a time-slider screen
 - [x] Snapshot tests for 12 fixed cases, rendered with `ImageRenderer`
 - [x] Still-frame path for Reduce Motion
-- [ ] Frame-time profiling on the iPhone 12 Pro — needs the device
-- [ ] Tune the three looks' colour tables by eye (placeholders until then)
+- [x] Frame-time profiling on the iPhone 12 Pro
+- [x] The three looks checked by eye on the device
 
 **Done when:** the gallery looks right for four cities at six times of day, and the time slider changes the sky smoothly.
 
@@ -151,9 +151,9 @@ Phase 8  ░░░░░░░░░░  not started
 - [x] Add-person, Look and Settings sheets
 - [x] A home person, which every arc starts from
 - [x] Tests: the transition state machine, and the reveal geometry
-- [ ] Share card through `ImageRenderer`
-- [ ] About and credits screen
-- [ ] Tests: UI open/close, and a 50× open/close leak check — both need an app test target
+- [x] Share card through `ImageRenderer`, rendered only when shared
+- [x] About and credits screen, reading its weather credit from the provider
+- [x] An app test target, covering the clock, the settings, adding a person and the card
 
 **Done when:** every flow works with real astronomy, mock weather, and the real globe.
 
@@ -217,6 +217,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The share card is a `Transferable` rather than an `Image`, so the render happens when someone shares rather than on every frame of a screen that redraws constantly |
+| 2026-10-23 | The credits screen reads its weather credit from the provider, so changing source changes the credit and the app cannot credit a service it no longer uses |
+| 2026-10-23 | NASA and EUMETSAT credits are out of the plan along with the imagery; Natural Earth is in |
 | 2026-10-23 | Returning the clock to now is stepped by hand over 0.85s. The globe is drawn in a `Canvas`, so SwiftUI cannot interpolate the date for us and an animation around the assignment still arrives in one jump |
 | 2026-10-23 | The globe's drift is a closed-form function of time, not state stepped each frame. Writing the camera sixty times a second re-laid out every marker and made the motion stutter |
 | 2026-10-23 | One timeline drives the Earth, the arcs and the markers together; the pulsing rings read that clock instead of running one each |

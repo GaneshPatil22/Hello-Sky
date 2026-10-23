@@ -9,9 +9,9 @@ Open a globe with your people on it. Tap one, and the whole screen becomes their
 ![Platform](https://img.shields.io/badge/platform-iOS%2027%2B-black)
 ![Swift](https://img.shields.io/badge/Swift-6.0-orange)
 ![Device](https://img.shields.io/badge/device-iPhone-lightgrey)
-![Status](https://img.shields.io/badge/status-Phase%205%20in%20progress-yellow)
+![Status](https://img.shields.io/badge/status-Phase%207%20next-yellow)
 
-> **Status:** early development, but the app now does the thing it is for: a globe with your people on it, and a tap turns the screen into their live sky.
+> **Status:** v1's whole shape exists. A globe with your people on it, a tap that turns the screen into their live sky, a card to share it, and the settings around them. Widgets, alerts and release work are what remain, and they need a paid Apple Developer account.
 > See [PROGRESS.md](PROGRESS.md) for the live phase-by-phase tracker.
 
 ---
@@ -35,7 +35,7 @@ Eight feature groups ship in v1. All of them work with no account, no server, an
 |---|---|---|---|
 | 🌍 | **Globe** | Interactive Earth with a live day/night line, city lights, a 24-hour time slider, and three looks | Working |
 | 👥 | **People** | Add up to 10 people with a name, city, and emoji avatar; editable awake hours; Good time / Maybe / Sleeping status; best-overlap window | Working |
-| 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Working; share card to come |
+| 🌇 | **Their sky** | Live sky from sun position, clouds, and moon phase, with local time, temperature, conditions, next sun event, and a shareable sky card | Working |
 | 🌅 | **My sky** | The same screen for your own location or a typed city, with golden hour, blue hour, and moon phase | Working |
 | 📱 | **Widgets** | Small, medium, and Lock Screen widgets showing a person's time over their real sky | Not started |
 | 🔔 | **Alerts** | Optional per-person sunrise and sunset notifications, computed on the device | Not started |
@@ -139,8 +139,9 @@ City coordinates are sent to Apple's weather service to retrieve forecasts. That
 |---|---|
 | Apple Weather (WeatherKit) | Apple Weather mark and legal link, displayed beside the weather data |
 | Open-Meteo | "Weather data by Open-Meteo.com" (development builds) |
-| [Live Cloud Maps](https://github.com/matteason/live-cloud-maps) | "Contains modified EUMETSAT data" |
-| NASA Blue Marble and Black Marble | Earth day and night textures |
+| [Natural Earth](https://www.naturalearthdata.com/about/terms-of-use/) | Public domain coastlines, which the globe's land mask is built from |
+
+The app ships no photographic imagery, so there is nothing else to credit.
 
 ## Documentation
 
