@@ -36,6 +36,11 @@ public final class PeopleStore {
         people.count >= Limits.maximumPeople
     }
 
+    /// How many more can be followed.
+    public var remainingPlaces: Int {
+        max(Limits.maximumPeople - people.count, 0)
+    }
+
     @discardableResult
     public func add(
         name: String,
@@ -81,10 +86,15 @@ public final class PeopleStore {
         try save()
     }
 
-    /// Fills an empty store with the sample cast, for debug builds and previews.
+    /// Fills an empty store with a few of the sample cast, for debug builds
+    /// and previews.
+    ///
+    /// Deliberately well short of the limit: seeding the whole cast left only
+    /// two free places, so adding anyone ran into the cap almost at once.
     public func seedWithFixtures() throws {
         guard people.isEmpty else { return }
-        for (index, person) in PersonFixtures.all.prefix(Limits.maximumPeople).enumerated() {
+        let cast = PersonFixtures.all.prefix(min(Limits.seeded, Limits.maximumPeople))
+        for (index, person) in cast.enumerated() {
             context.insert(StoredPerson(person: person, sortOrder: index))
         }
         try save()
@@ -121,5 +131,8 @@ extension PeopleStore {
     public enum Limits {
         /// v1 caps the list at ten, which keeps the globe readable.
         public static let maximumPeople = 10
+        /// How many samples a debug build starts with, leaving most of the
+        /// list free.
+        public static let seeded = 4
     }
 }

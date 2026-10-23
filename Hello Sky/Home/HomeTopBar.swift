@@ -19,6 +19,7 @@ struct HomeTopBar: View {
 
             button("Add Person", systemImage: "plus", action: onAddPerson)
                 .disabled(!canAddPerson)
+                .accessibilityHint(canAddPerson ? "" : "The list is full. Remove someone first.")
             button("Look", systemImage: "paintpalette", action: onChooseLook)
             button("Settings", systemImage: "gearshape", action: onOpenSettings)
         }

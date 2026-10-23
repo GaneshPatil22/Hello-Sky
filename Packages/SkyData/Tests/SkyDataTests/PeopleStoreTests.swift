@@ -117,10 +117,19 @@ struct PeopleStoreTests {
         let store = try emptyStore()
         try store.seedWithFixtures()
         let seeded = store.people.count
-        #expect(seeded == min(PersonFixtures.all.count, PeopleStore.Limits.maximumPeople))
+        #expect(seeded == PeopleStore.Limits.seeded)
 
         try store.seedWithFixtures()
         #expect(store.people.count == seeded, "seeding twice must not duplicate")
+    }
+
+    @Test("Leaves most of the list free after seeding")
+    func seedingLeavesRoom() throws {
+        let store = try emptyStore()
+        try store.seedWithFixtures()
+        #expect(store.isFull == false)
+        #expect(store.remainingPlaces >= PeopleStore.Limits.maximumPeople / 2,
+                "a debug build must not spend most of the limit on samples")
     }
 
     @Test("Keeps people in the order they were added")

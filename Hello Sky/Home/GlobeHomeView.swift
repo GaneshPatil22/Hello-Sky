@@ -206,9 +206,12 @@ struct GlobeHomeView: View {
                         )
                         .id(person.id)
                     }
-                    AddPersonCard { isAddingPerson = true }
-                        .opacity(store.isFull ? Layout.disabled : 1)
-                        .disabled(store.isFull)
+                    AddPersonCard(
+                        isFull: store.isFull,
+                        limit: PeopleStore.Limits.maximumPeople
+                    ) {
+                        isAddingPerson = true
+                    }
                 }
                 .scrollTargetLayout()
             }

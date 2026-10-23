@@ -29,10 +29,18 @@ struct PeopleListView: View {
                             description: Text("Add someone to see the sky where they are.")
                         )
                     } else {
-                        ForEach(store.people) { person in
-                            PersonRow(person: person, date: context.date)
+                        Section {
+                            ForEach(store.people) { person in
+                                PersonRow(person: person, date: context.date)
+                            }
+                            .onDelete(perform: delete)
+                        } footer: {
+                            // Explains the greyed-out Add button, which
+                            // otherwise just looks broken.
+                            if store.isFull {
+                                Text("You can follow up to ^[\(PeopleStore.Limits.maximumPeople) person](inflect: true). Remove someone to add another.")
+                            }
                         }
-                        .onDelete(perform: delete)
                     }
                 }
             }

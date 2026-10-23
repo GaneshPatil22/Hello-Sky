@@ -22,7 +22,7 @@ Phase 8  ░░░░░░░░░░  not started
 
 ## Right now
 
-**Working on:** nothing. Phases 0 to 6 are done and checked on the device. The sky screen now carries the sun's arc, the shared waking hours, and a sunrise or sunset reminder. 244 tests, 34 of them in the app itself.
+**Working on:** nothing. Phases 0 to 6 are done and checked on the device. The sky screen now carries the sun's arc, the shared waking hours, and a sunrise or sunset reminder. 266 tests, 39 of them in the app itself.
 
 **Next three things:**
 1. Enrol in the Apple Developer Program, which is what Phase 7 waits on.
@@ -217,6 +217,8 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | iPhone 12 Pro on iOS 27 confirmed as the performance baseline device |
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
+| 2026-10-23 | A debug build seeds four sample people, not eight. The limit is ten, so the samples left room for two more and the Add button locked almost at once |
+| 2026-10-23 | When the list is full the Add control says so — "Full · 10 is the most" on the globe, a footer in the list — rather than greying out with no reason given |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
 | 2026-10-23 | The add-person form asks for the city first, because it decides the clock and suggests the name, and the keyboard moves itself on once a city is chosen |
 | 2026-10-23 | City search is debounced by 250ms, and a slow result that arrives after the text has moved on is discarded |
