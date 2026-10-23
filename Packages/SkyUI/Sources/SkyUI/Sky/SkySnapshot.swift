@@ -72,25 +72,38 @@ extension SkySnapshot {
     }
 
     /// The halo is strongest at the horizon, where the light travels furthest
-    /// through the air, and fades as the sun climbs.
+    /// through the air, and fades both as the sun climbs and as it sets.
+    ///
+    /// Both ends fade. An earlier version cut the glow off below the horizon
+    /// while it was still at full strength just above it, so the halo — and
+    /// everything coloured from it — snapped as the sun crossed that line.
     static func sunGlow(sunElevation: Double, cloud: Double) -> Double {
-        guard sunElevation > Thresholds.glowStops else { return 0 }
-        let height = Self.ramp(sunElevation, from: Thresholds.glowFullyFadedAbove, to: Thresholds.glowStops)
-        return height * (1 - cloud * Thresholds.cloudDimsGlow)
+        let rise = Self.ramp(sunElevation, from: Thresholds.glowFullyFadedAbove, to: 0)
+        let set = Self.ramp(sunElevation, from: Thresholds.glowStops, to: 0)
+        return rise * set * (1 - cloud * Thresholds.cloudDimsGlow)
     }
 
     /// The colour the screen's controls take from the sky.
     ///
-    /// Derived from the horizon rather than fixed per look, so the slider, the
-    /// sun's arc and the share button drift with the sky as the time slider
-    /// moves instead of switching between two states. A dark sky is lifted
-    /// further towards the warm tone, which is what turns a navy midnight into
-    /// a tan accent while leaving a pale midday almost white.
+    /// The sky's own hue, brought up to a usable brightness. Taking the hue is
+    /// the point: a dawn gives a warm tan, a midday a cool near-white, a dusk
+    /// a violet. Blending towards one fixed warm tone, as this did at first,
+    /// only ever made the accent lighter or darker.
+    ///
+    /// The horizon carries the day's colour more strongly than the top of the
+    /// sky, so the accent is taken from there and leant towards the glow when
+    /// the sun is near the horizon.
+    /// Follows whatever is lighting the place: the sky through the day, the
+    /// low sun at dawn and dusk, and the moon once it is dark. So a midday is
+    /// cool, a sunrise is warm, and a night is warm in a different way again.
     public var accent: SkyColor {
-        let brightness = (gradient.horizon.red + gradient.horizon.green + gradient.horizon.blue) / 3
-        let lift = Thresholds.accentFloor
-            + (Thresholds.accentCeiling - Thresholds.accentFloor) * (1 - brightness)
-        return gradient.horizon.blended(towards: Thresholds.accentWarmth, amount: lift)
+        let base = gradient.horizon.blended(towards: gradient.top, amount: Thresholds.accentFromTop)
+        let lit = base.blended(towards: Thresholds.accentGlow, amount: sunGlow * Thresholds.accentGlowPull)
+        let byNight = lit.blended(
+            towards: Thresholds.accentMoonlight,
+            amount: starVisibility * Thresholds.accentMoonPull
+        )
+        return byNight.asAccent()
     }
 
     /// How far up the frame something sits, from its elevation.
@@ -144,11 +157,16 @@ extension SkySnapshot {
         public static let horizonFraction = 0.78
         /// The highest the sun or moon is drawn, leaving room for the disc.
         public static let skyCeilingFraction = 0.13
-        /// How far a bright sky's accent is lifted towards the warm tone.
-        public static let accentFloor = 0.55
-        /// And how far a dark one is.
-        public static let accentCeiling = 0.95
-        public static let accentWarmth = SkyColor(hex: 0xE6D4B4)
+        /// How much of the sky's upper colour the accent borrows.
+        public static let accentFromTop = 0.25
+        /// Low sun lends its warmth to the accent, which is what makes a
+        /// sunrise feel different from a midday.
+        public static let accentGlowPull = 0.45
+        public static let accentGlow = SkyColor(hex: 0xFFC27A)
+        /// Once the stars are out the moon is what lights the place, and its
+        /// light is warmer than the sky it crosses.
+        public static let accentMoonPull = 0.8
+        public static let accentMoonlight = SkyColor(hex: 0xD8C2A0)
         /// By this height the halo has gone.
         public static let glowFullyFadedAbove = 25.0
     }

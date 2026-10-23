@@ -218,6 +218,10 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The accent takes the sky's **hue**, not its lightness, and follows whatever is lighting the place: the sky by day, the low sun at dawn and dusk, moonlight at night |
+| 2026-10-23 | `sunGlow` returned 0 below −6° while still at full strength just above it — a step of 1.0 that snapped the halo and everything coloured from it. Both ends now fade |
+| 2026-10-23 | The turn and the reveal run off one stepped tween. As two SwiftUI animations the globe jumped to the end while the markers slid after it, because a canvas draws from the value at that instant |
+| 2026-10-23 | The app is set in SF Pro Rounded throughout |
 | 2026-10-23 | The sun and moon stop short of the top edge. In the tropics the midday sun is almost overhead, and a mapping that saturated at 70° drew it half off the screen |
 | 2026-10-23 | The sky screen takes its top inset as a parameter: the reveal has to cover the status bar, so the layer it sits in ignores the safe area and reports none of its own |
 | 2026-10-23 | The sun and moon are placed across the sky by **hour angle**, not azimuth. Near the equator the azimuth barely moves all morning and then swings through half a turn within minutes of noon, so a sun placed by it climbs and falls in a straight line |

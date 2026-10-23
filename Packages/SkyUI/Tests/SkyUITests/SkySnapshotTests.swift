@@ -63,13 +63,25 @@ struct SkySnapshotTests {
         #expect(overcast < 0.1, "got \(overcast)")
     }
 
-    @Test("The glow is strongest at the horizon and gone below it")
+    @Test("The glow is strongest at the horizon and gone either side")
     func glowPeaksAtTheHorizon() {
         #expect(SkySnapshot.sunGlow(sunElevation: -10, cloud: 0) == 0)
         let atHorizon = SkySnapshot.sunGlow(sunElevation: 0, cloud: 0)
         let high = SkySnapshot.sunGlow(sunElevation: 25, cloud: 0)
         #expect(atHorizon > high, "horizon \(atHorizon) should beat high \(high)")
         #expect(high == 0)
+    }
+
+    @Test("The glow fades in and out rather than switching")
+    func glowHasNoStep() {
+        // It used to cut to zero below the horizon while still at full strength
+        // just above it, which snapped the halo and everything coloured from it.
+        var previous = SkySnapshot.sunGlow(sunElevation: -30, cloud: 0)
+        for elevation in stride(from: -29.5, through: 40.0, by: 0.5) {
+            let glow = SkySnapshot.sunGlow(sunElevation: elevation, cloud: 0)
+            #expect(abs(glow - previous) < 0.1, "glow jumped at \(elevation): \(previous) to \(glow)")
+            previous = glow
+        }
     }
 
     @Test("Cloud dims the glow without removing it")
@@ -144,38 +156,54 @@ struct SkyPlacementTests {
         #expect(positions.last! - positions.first! > 0.3, "the sun barely moved across")
     }
 
-    @Test("The accent follows the sky instead of jumping between two colours")
+    @Test("The accent slides through the day rather than switching")
     func accentIsGradual() {
+        // Sampled every minute. Twilight genuinely moves fast — the worst
+        // honest step is about 0.04 — so anything much beyond that is a seam
+        // rather than the sky changing.
         var accents: [SkyColor] = []
-        for hour in stride(from: 0.0, through: 23.0, by: 1.0) {
-            let moment = date("2026-10-23T00:00:00Z").addingTimeInterval(hour * 3_600)
+        for step in stride(from: 0.0, through: 24 * 60, by: 1.0) {
+            let moment = date("2026-10-23T00:00:00Z").addingTimeInterval(step * 60)
             let snapshot = SkySnapshot(place: london, date: moment,
                                        weather: SkyWeather.Samples.clear(at: moment), theme: .realistic)
             accents.append(snapshot.accent)
         }
-        #expect(Set(accents).count > 12, "the accent only took \(Set(accents).count) values across a day")
+        #expect(Set(accents).count > 200, "the accent only took \(Set(accents).count) values across a day")
 
         for (earlier, later) in zip(accents, accents.dropFirst()) {
-            let step = max(abs(later.red - earlier.red),
-                           abs(later.green - earlier.green),
-                           abs(later.blue - earlier.blue))
-            #expect(step < 0.2, "the accent jumped by \(step) in an hour")
+            let change = max(abs(later.red - earlier.red),
+                             abs(later.green - earlier.green),
+                             abs(later.blue - earlier.blue))
+            #expect(change < 0.06, "the accent jumped by \(change) in one minute")
         }
     }
 
-    @Test("A night sky gets a warm accent, a day sky a pale one")
-    func accentWarmsAtNight() {
+    @Test("The accent follows the light: cool by day, warm by night")
+    func accentFollowsTheLight() {
         func accent(atHour hour: Double) -> SkyColor {
-            let moment = date("2026-06-21T00:00:00Z").addingTimeInterval(hour * 3_600)
+            let moment = date("2026-12-21T00:00:00Z").addingTimeInterval(hour * 3_600)
             return SkySnapshot(place: london, date: moment,
                                weather: SkyWeather.Samples.clear(at: moment), theme: .realistic).accent
         }
-        let night = accent(atHour: 1)
+        let night = accent(atHour: 2)
         let midday = accent(atHour: 12)
 
-        #expect(night.red > night.blue, "night should lean warm")
-        #expect(midday.red + midday.green + midday.blue > night.red + night.green + night.blue,
-                "midday should be the brighter of the two")
+        #expect(night.red > night.blue, "moonlight should lean warm")
+        #expect(midday.blue > midday.red, "a midday sky should lean cool")
+        #expect(abs(night.components.hue - midday.components.hue) > 0.1,
+                "night and midday should differ in hue, not only in lightness")
+    }
+
+    @Test("Every accent is bright enough to read against the panels")
+    func accentIsAlwaysLegible() {
+        for hour in stride(from: 0.0, through: 23.0, by: 1.0) {
+            let moment = date("2026-06-21T00:00:00Z").addingTimeInterval(hour * 3_600)
+            let accent = SkySnapshot(place: london, date: moment,
+                                     weather: SkyWeather.Samples.clear(at: moment),
+                                     theme: .realistic).accent
+            #expect(abs(accent.components.brightness - SkyColor.Accent.brightness) < 0.01,
+                    "hour \(hour) came out at \(accent.components.brightness)")
+        }
     }
 }
 

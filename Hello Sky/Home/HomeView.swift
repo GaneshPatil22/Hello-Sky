@@ -32,6 +32,9 @@ struct HomeView: View {
         // look rather than a per-screen setting.
         .theme(registry.theme(storedID: settings.themeID))
         .preferredColorScheme(.dark)
+        // Rounded everywhere. The default face is flat beside a drawn sky, and
+        // this is the one the clock already used.
+        .fontDesign(.rounded)
         .animation(.easeInOut(duration: Animation.barFade), value: isTabBarHidden)
     }
 

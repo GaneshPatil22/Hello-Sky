@@ -37,10 +37,11 @@ struct OverlapCard: View {
             VStack(alignment: .leading, spacing: Layout.summarySpacing) {
                 Text(headline)
                     .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(accent)
                 if let detail {
                     Text(detail)
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(accent.opacity(Layout.detailOpacity))
                 }
             }
         }
@@ -109,6 +110,7 @@ extension OverlapCard {
         static let spacing: Double = 12
         static let summarySpacing: Double = 3
         static let padding: Double = 18
+        static let detailOpacity = 0.7
         /// A window starting within this counts as starting now.
         static let rightNowWithin: TimeInterval = 20 * 60
     }

@@ -26,6 +26,7 @@ struct GlobeHomeView: View {
     @State private var revealProgress: Double = 0
     @State private var revealOrigin: CGPoint?
     @State private var cameraBeforeFocus = GlobeCamera()
+    @State private var moveTask: Task<Void, Never>?
     @State private var isAddingPerson = false
     @State private var isChoosingLook = false
     @State private var isShowingSettings = false
@@ -236,22 +237,35 @@ struct GlobeHomeView: View {
 
         guard !reduceMotion else {
             // Reduce Motion gets a plain crossfade: no turn, no circle.
-            withAnimation(.easeInOut(duration: SkyTransition.Timing.reveal)) { revealProgress = 1 }
+            moveTask?.cancel()
+            moveTask = Tween.run(duration: SkyTransition.Timing.reveal) { revealProgress = $0 }
             finishOpening(after: SkyTransition.Timing.reveal)
             return
         }
 
-        withAnimation(.easeInOut(duration: SkyTransition.Timing.focus)) { focusProgress = 1 }
-        withAnimation(.easeOut(duration: SkyTransition.Timing.reveal)
-            .delay(SkyTransition.Timing.revealDelay)) { revealProgress = 1 }
+        // One tween drives the turn and the reveal together. They used to be
+        // two separate animations, and because the globe is drawn in a canvas
+        // it jumped to the end while the markers slid after it.
+        moveTask?.cancel()
+        moveTask = Tween.run(duration: SkyTransition.Timing.total) { progress in
+            let elapsed = progress * SkyTransition.Timing.total
+            focusProgress = Tween.eased(min(elapsed / SkyTransition.Timing.focus, 1))
+            let intoReveal = elapsed - SkyTransition.Timing.revealDelay
+            revealProgress = Tween.eased(
+                (intoReveal / SkyTransition.Timing.reveal).clamped(to: 0...1)
+            )
+        }
         finishOpening(after: SkyTransition.Timing.total)
     }
 
     private func close() {
         guard transition.close() else { return }
-        withAnimation(.easeIn(duration: SkyTransition.Timing.close)) {
-            revealProgress = 0
-            focusProgress = 0
+        let fromReveal = revealProgress
+        let fromFocus = focusProgress
+        moveTask?.cancel()
+        moveTask = Tween.run(duration: SkyTransition.Timing.close) { progress in
+            revealProgress = fromReveal * (1 - progress)
+            focusProgress = fromFocus * (1 - progress)
         }
         Task {
             try? await Task.sleep(for: .seconds(SkyTransition.Timing.close))

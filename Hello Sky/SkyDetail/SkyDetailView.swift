@@ -150,10 +150,10 @@ struct SkyDetailView: View {
     private var details: some View {
         VStack(spacing: Layout.cardGap) {
             SunArcCard(person: person, date: date, accent: accent)
+            TimeSlider(time: time, reference: home ?? person, style: .compact, accent: accent)
             if let home, home.id != person.id {
                 OverlapCard(home: home, person: person, date: date, accent: accent)
             }
-            TimeSlider(time: time, reference: home ?? person, style: .compact, accent: accent)
             SkyActionsRow(
                 card: card,
                 shareTitle: SkyCard.title(for: person),
