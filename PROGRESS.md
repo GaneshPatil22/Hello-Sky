@@ -217,6 +217,7 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The arc colour is a look value (`arcTint`), warm gold rather than the blue accent, and the travelling lights share the city lights' drawing so the globe has one idea of what a light is |
 | 2026-10-23 | Arcs carry no status. The lines say who you follow; the rings around the avatars say how they are. Mixing them would make the globe a chart of statuses |
 | 2026-10-23 | One dot per arc at constant angular speed, so longer arcs take longer and the dots drift out of step by themselves |
 | 2026-10-23 | A home person is chosen in settings; every arc starts there and the time card reads that city's clock |

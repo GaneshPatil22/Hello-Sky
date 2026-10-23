@@ -41,6 +41,11 @@ public struct GlobeStyle: Hashable, Sendable {
     /// The wash laid over the night half.
     public let nightShade: SkyColor
     public let graticule: SkyColor
+    /// The arcs between people, and the lights travelling along them.
+    ///
+    /// Deliberately one colour for every arc: the lines say who you follow,
+    /// and the rings around the avatars say how they are.
+    public let arcTint: SkyColor
 
     public init(
         surface: Surface,
@@ -56,7 +61,8 @@ public struct GlobeStyle: Hashable, Sendable {
         landTerminator: SkyColor,
         landDay: SkyColor,
         nightShade: SkyColor,
-        graticule: SkyColor
+        graticule: SkyColor,
+        arcTint: SkyColor
     ) {
         self.surface = surface
         self.dayTextureName = dayTextureName
@@ -72,5 +78,6 @@ public struct GlobeStyle: Hashable, Sendable {
         self.landDay = landDay
         self.nightShade = nightShade
         self.graticule = graticule
+        self.arcTint = arcTint
     }
 }

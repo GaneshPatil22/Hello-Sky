@@ -40,7 +40,8 @@ extension Theme {
             landTerminator: SkyColor(hex: 0xFF9E60),
             landDay: SkyColor(hex: 0xBAE6C4),
             nightShade: SkyColor(hex: 0x02060F),
-            graticule: SkyColor(hex: 0xFFFFFF)
+            graticule: SkyColor(hex: 0xFFFFFF),
+            arcTint: SkyColor(hex: 0xFFC861)
         ),
         accent: SkyColor(hex: 0x4F93F5),
         starTint: SkyColor(hex: 0xFFFFFF),

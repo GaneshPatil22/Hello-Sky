@@ -19,14 +19,12 @@ struct GlobeCityLights {
             let alpha = (1 - strength) * Layout.opacity * (Layout.depthFloor + Layout.depthRange * facing)
             guard alpha > Layout.invisibleBelow else { continue }
 
-            let size = frame.radius * Layout.sizeFraction
-            let halo = CGRect(x: position.x - size, y: position.y - size, width: size * 2, height: size * 2)
-            context.fill(
-                Path(ellipseIn: halo),
-                with: .radialGradient(
-                    Gradient(colors: [style.cityLights.color.opacity(alpha), .clear]),
-                    center: position, startRadius: 0, endRadius: size
-                )
+            GlowDot.draw(
+                in: &context,
+                at: position,
+                radius: frame.radius * Layout.sizeFraction,
+                colour: style.cityLights.color,
+                brightness: alpha
             )
         }
     }

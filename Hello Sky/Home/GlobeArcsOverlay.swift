@@ -57,11 +57,9 @@ struct GlobeArcsOverlay: View {
         let index = min(Int(progress * Double(projected.count - 1)), projected.count - 1)
 
         guard let dot = projected[index] else { return }
-        let size = Layout.dotRadius
-        context.fill(
-            Path(ellipseIn: CGRect(x: dot.x - size, y: dot.y - size, width: size * 2, height: size * 2)),
-            with: .color(tint)
-        )
+        // The same light the night side uses for a city, so a travelling dot
+        // reads as something lit rather than a sticker on the glass.
+        GlowDot.draw(in: &context, at: dot, radius: Layout.dotGlowRadius, colour: tint)
     }
 
     /// Arcs ride above the surface, so a point stays visible a little past the
@@ -75,8 +73,9 @@ struct GlobeArcsOverlay: View {
         )
     }
 
+    /// One colour for every arc and every light on it, from the look.
     private var tint: Color {
-        theme.accent.color
+        theme.globe.arcTint.color
     }
 }
 
@@ -85,7 +84,9 @@ extension GlobeArcsOverlay {
         static let lineOpacity = 0.55
         static let lineWidth: Double = 1.1
         static let dash: [CGFloat] = [2, 5]
-        static let dotRadius: Double = 2.6
+        /// The halo, not the core: the light is bright in the middle and
+        /// fades well before this.
+        static let dotGlowRadius: Double = 7
         /// Radians of arc a dot covers each second.
         static let dotSpeed = 0.22
         /// Arcs are lifted, so they may show slightly beyond the horizon.
