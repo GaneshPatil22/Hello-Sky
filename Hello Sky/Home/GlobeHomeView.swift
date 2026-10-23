@@ -13,8 +13,14 @@ struct GlobeHomeView: View {
     let store: PeopleStore
     let weather: WeatherRepository
     @Bindable var settings: AppSettings
+    /// Reported upward so the tab bar can step aside for a sky.
+    @Binding var isSkyShowing: Bool
 
-    @State private var camera = GlobeCamera()
+    /// Where the globe was last put by hand, and when. The camera on screen is
+    /// worked out from these and the clock, so nothing writes state per frame.
+    @State private var baseCamera = GlobeCamera()
+    @State private var baseTime = Date.now
+    @State private var dragAnchor: GlobeCamera?
     @State private var transition = SkyTransition()
     @State private var focusProgress: Double = 0
     @State private var revealProgress: Double = 0
@@ -55,7 +61,9 @@ struct GlobeHomeView: View {
             SettingsSheet(settings: settings, store: store)
                 .presentationDetents([.medium])
         }
-        .toolbarVisibility(transition.isShowingSky ? .hidden : .automatic, for: .tabBar)
+        .onChange(of: transition.isShowingSky) { _, showing in
+            isSkyShowing = showing
+        }
         .sensoryFeedback(.impact(weight: .light), trigger: transition.phase) { _, phase in
             // One tick when the sky lands, which is what makes it feel arrived at.
             phase == .sky(personID: transition.personID ?? "")
@@ -68,35 +76,32 @@ struct GlobeHomeView: View {
         ZStack {
             backdrop
             StarfieldView(tint: theme.starTint)
-            // The Earth and its markers share one frame, kept clear of the
-            // chips and the slider, so the globe centres in the space it
-            // actually has rather than behind the controls.
             VStack(spacing: 0) {
                 Color.clear.frame(height: Layout.topReserve)
-                ZStack {
-                    InteractiveGlobeView(
-                        camera: displayCamera,
-                        date: date,
-                        isInteractive: !transition.isShowingSky,
-                        onCameraChange: { camera = $0 }
-                    )
-                    GlobeArcsOverlay(
-                        home: homePerson,
-                        people: store.people,
-                        camera: displayCamera,
-                        elapsed: Date.now.timeIntervalSince(started)
-                    )
-                    .opacity(1 - revealProgress)
-                    GlobeMarkerOverlay(
-                        people: store.people,
-                        camera: displayCamera,
-                        date: date,
-                        selected: openedPerson,
-                        onSelect: { open($0, in: globeSize(in: size)) }
-                    )
-            // Faded against the reveal rather than switched off when the
-            // move starts, which otherwise left the globe bare for half a
-            // second before the sky arrived.
+                // One timeline drives the Earth, the arcs and the markers, so
+                // they are always drawn from the same instant and none of them
+                // needs state written to it as the clock ticks.
+                TimelineView(.animation(minimumInterval: Layout.frameInterval,
+                                        paused: reduceMotion || transition.isShowingSky)) { context in
+                    let live = liveCamera(at: context.date)
+                    ZStack {
+                        GlobeCanvasView(camera: live, date: date)
+                            .gesture(spin)
+                        GlobeArcsOverlay(
+                            home: homePerson,
+                            people: store.people,
+                            camera: live,
+                            elapsed: context.date.timeIntervalSince(started)
+                        )
+                        GlobeMarkerOverlay(
+                            people: store.people,
+                            camera: live,
+                            date: date,
+                            now: context.date,
+                            selected: openedPerson,
+                            onSelect: { open($0, in: globeSize(in: size)) }
+                        )
+                    }
                     .opacity(1 - revealProgress)
                 }
                 Color.clear.frame(height: Layout.controlsReserve)
@@ -104,13 +109,50 @@ struct GlobeHomeView: View {
         }
     }
 
-    /// The area the globe actually occupies, which is everything above the
-    /// chips and the slider.
+    /// The area the globe actually occupies, which is everything between the
+    /// title and the controls.
     private func globeSize(in size: CGSize) -> CGSize {
         CGSize(
             width: size.width,
             height: max(size.height - Layout.controlsReserve - Layout.topReserve, 1)
         )
+    }
+
+    /// Turning the globe by hand. Writes the camera only when a finger moves
+    /// it, never on a timer.
+    private var spin: some Gesture {
+        DragGesture()
+            .onChanged { value in
+                let anchor = dragAnchor ?? liveCamera(at: .now)
+                dragAnchor = anchor
+                var moved = anchor
+                moved.drag(by: (
+                    longitude: -value.translation.width * Layout.degreesPerPoint,
+                    latitude: value.translation.height * Layout.degreesPerPoint
+                ))
+                baseCamera = moved
+                baseTime = .now
+            }
+            .onEnded { value in
+                dragAnchor = nil
+                var released = baseCamera
+                released.release(velocity: -value.velocity.width * Layout.degreesPerPoint)
+                baseCamera = released
+                baseTime = .now
+            }
+    }
+
+    /// The camera to draw with: held still under a finger, carried by the
+    /// transition while one is running, and drifting the rest of the time.
+    private func liveCamera(at now: Date) -> GlobeCamera {
+        if let person = openedPerson, focusProgress > 0 {
+            return cameraBeforeFocus.interpolated(
+                towards: .focused(on: person.place.coordinate),
+                progress: focusProgress
+            )
+        }
+        if dragAnchor != nil { return baseCamera }
+        return baseCamera.projected(after: now.timeIntervalSince(baseTime))
     }
 
     private func skyLayer(for person: Person, in size: CGSize) -> some View {
@@ -186,7 +228,7 @@ struct GlobeHomeView: View {
     private func open(_ person: Person, in size: CGSize?) {
         guard transition.open(personID: person.id) else { return }
 
-        cameraBeforeFocus = camera
+        cameraBeforeFocus = liveCamera(at: .now)
         focusProgress = 0
         revealProgress = 0
         revealOrigin = size.map { markerPoint(for: person, in: $0) }
@@ -213,7 +255,8 @@ struct GlobeHomeView: View {
         Task {
             try? await Task.sleep(for: .seconds(SkyTransition.Timing.close))
             transition.finishClosing()
-            camera = cameraBeforeFocus
+            baseCamera = cameraBeforeFocus
+            baseTime = .now
         }
     }
 
@@ -228,7 +271,7 @@ struct GlobeHomeView: View {
     private func markerPoint(for person: Person, in size: CGSize) -> CGPoint {
         let fallback = CGPoint(x: size.width / 2, y: size.height / 2)
         let local = GlobeProjection.screenPoint(
-            for: person.place.coordinate, camera: displayCamera, size: size
+            for: person.place.coordinate, camera: liveCamera(at: .now), size: size
         ) ?? fallback
         // The globe sits below the title, so its own coordinates are that far
         // down the screen the reveal is masked in.
@@ -249,16 +292,6 @@ struct GlobeHomeView: View {
         transition.personID.flatMap { id in store.people.first { $0.id == id } }
     }
 
-    /// The camera the globe is actually drawn with: the user's, or the turn
-    /// towards the opened city while one is running.
-    private var displayCamera: GlobeCamera {
-        guard let person = openedPerson, focusProgress > 0 else { return camera }
-        return cameraBeforeFocus.interpolated(
-            towards: .focused(on: person.place.coordinate),
-            progress: focusProgress
-        )
-    }
-
     private var date: Date { time.date() }
 }
 
@@ -270,6 +303,9 @@ extension GlobeHomeView {
         static let spacing: Double = 12
         static let chipSpacing: Double = 10
         static let disabled = 0.4
+        static let frameInterval = 1.0 / 60
+        /// How far a drag turns the globe.
+        static let degreesPerPoint = 0.35
         /// Height kept free at the bottom for the chips and the time card.
         static let controlsReserve: Double = 300
         /// Height kept free at the top for the status bar and the title.

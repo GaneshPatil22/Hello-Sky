@@ -31,7 +31,7 @@ Phase 8  ░░░░░░░░░░  not started
 
 **Open questions:**
 - The title says **Hello Sky**, not "Same Sky" as the reference screenshots do. Same Sky was the prototype's name; the product name was settled as Hello Sky in section 0 of the plan. Say which should win.
-- The reference tab bar reads Globe / My sky / **Widgets**. Ours keeps **People**, because widgets do not exist until Phase 7 and a tab leading to nothing is worse than one that works.
+- The reference tab bar reads Globe / My sky / **Widgets**. Ours keeps **People**, because widgets do not exist until Phase 7 and a tab leading to nothing is worse than one that works. The bar's styling now matches the reference either way.
 
 **Blocked on:** nothing.
 
@@ -217,6 +217,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The globe's drift is a closed-form function of time, not state stepped each frame. Writing the camera sixty times a second re-laid out every marker and made the motion stutter |
+| 2026-10-23 | One timeline drives the Earth, the arcs and the markers together; the pulsing rings read that clock instead of running one each |
+| 2026-10-23 | The tab bar is drawn by hand. The system bar on this release is a floating capsule with a selected pill, which no styling turns into the flat bar the design calls for |
 | 2026-10-23 | The arc colour is a look value (`arcTint`), warm gold rather than the blue accent, and the travelling lights share the city lights' drawing so the globe has one idea of what a light is |
 | 2026-10-23 | Arcs carry no status. The lines say who you follow; the rings around the avatars say how they are. Mixing them would make the globe a chart of statuses |
 | 2026-10-23 | One dot per arc at constant angular speed, so longer arcs take longer and the dots drift out of step by themselves |

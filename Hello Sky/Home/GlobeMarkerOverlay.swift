@@ -10,6 +10,8 @@ struct GlobeMarkerOverlay: View {
     let people: [Person]
     let camera: GlobeCamera
     let date: Date
+    /// The frame's instant, used only for the pulsing rings.
+    let now: Date
     let selected: Person?
     let onSelect: (Person) -> Void
 
@@ -31,7 +33,7 @@ struct GlobeMarkerOverlay: View {
             Button {
                 onSelect(person)
             } label: {
-                GlobeMarker(person: person, date: date, isSelected: selected?.id == person.id)
+                GlobeMarker(person: person, date: date, isSelected: selected?.id == person.id, now: now)
             }
             .buttonStyle(.plain)
             .position(point)

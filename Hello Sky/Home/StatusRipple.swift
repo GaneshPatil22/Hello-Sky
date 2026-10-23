@@ -8,6 +8,9 @@ import SwiftUI
 struct StatusRipple: View {
     let status: CallStatus
     let diameter: Double
+    /// Supplied by the globe's timeline rather than kept here, so six markers
+    /// do not run six separate clocks.
+    let now: Date
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -19,16 +22,14 @@ struct StatusRipple: View {
                         lineWidth: Layout.width)
                 .frame(width: diameter * Layout.restingScale, height: diameter * Layout.restingScale)
         } else {
-            TimelineView(.animation(minimumInterval: Layout.frameInterval)) { context in
-                let phase = Self.phase(at: context.date, status: status)
-                Circle()
-                    .stroke(StatusDot.colour(for: status).opacity((1 - phase) * Layout.peakOpacity),
-                            lineWidth: Layout.width)
-                    .frame(
-                        width: diameter * (1 + phase * Layout.growth),
-                        height: diameter * (1 + phase * Layout.growth)
-                    )
-            }
+            let phase = Self.phase(at: now, status: status)
+            Circle()
+                .stroke(StatusDot.colour(for: status).opacity((1 - phase) * Layout.peakOpacity),
+                        lineWidth: Layout.width)
+                .frame(
+                    width: diameter * (1 + phase * Layout.growth),
+                    height: diameter * (1 + phase * Layout.growth)
+                )
         }
     }
 
@@ -53,7 +54,6 @@ struct StatusRipple: View {
 
 extension StatusRipple {
     private enum Layout {
-        static let frameInterval = 1.0 / 30
         static let growth = 0.85
         static let peakOpacity = 0.75
         static let width: Double = 1.6

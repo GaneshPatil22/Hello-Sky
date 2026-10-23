@@ -31,14 +31,30 @@ public struct GlobeCamera: Hashable, Sendable {
         spin = degreesPerSecond.clamped(to: Limits.spin)
     }
 
-    /// Moves time forward: carried momentum decays, and the idle drift takes over.
+    /// Where the globe will have turned to, `seconds` from this moment.
+    ///
+    /// Worked out in closed form rather than stepped frame by frame. That is
+    /// what lets the view draw straight from the clock instead of writing new
+    /// camera state sixty times a second, which was re-laying out every marker
+    /// on screen each frame and making the drift stutter.
+    public func projected(after seconds: TimeInterval) -> GlobeCamera {
+        guard seconds > 0 else { return self }
+
+        // Momentum decays exponentially, so the distance it carries the globe
+        // is the integral of that decay: (dᵗ − 1) / ln d.
+        let decayed = spin * pow(Motion.decayPerSecond, seconds)
+        let carried = spin * (pow(Motion.decayPerSecond, seconds) - 1) / log(Motion.decayPerSecond)
+
+        return GlobeCamera(
+            longitude: longitude + Motion.idleDrift * seconds + carried,
+            latitude: latitude,
+            spin: abs(decayed) < Motion.restsBelow ? 0 : decayed
+        )
+    }
+
+    /// Moves time forward in place.
     public mutating func advance(by seconds: TimeInterval) {
-        guard seconds > 0 else { return }
-        longitude = Self.wrapped(longitude + spin * seconds + Motion.idleDrift * seconds)
-        // Exponential decay, so the globe slows the way a heavy thing does
-        // rather than stopping on a fixed count of frames.
-        spin *= pow(Motion.decayPerSecond, seconds)
-        if abs(spin) < Motion.restsBelow { spin = 0 }
+        self = projected(after: seconds)
     }
 
     public var isCoasting: Bool { spin != 0 }

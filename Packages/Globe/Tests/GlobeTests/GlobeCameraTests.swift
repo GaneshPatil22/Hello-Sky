@@ -152,3 +152,45 @@ struct GlobeCameraFocusTests {
                                    progress: 0.5).isCoasting == false)
     }
 }
+
+@Suite("Globe camera projection")
+struct GlobeCameraProjectionTests {
+    @Test("No time passing leaves the camera alone")
+    func zeroIsIdentity() {
+        var camera = GlobeCamera(longitude: 42, latitude: 10)
+        camera.release(velocity: 90)
+        #expect(camera.projected(after: 0) == camera)
+        #expect(camera.projected(after: -5) == camera)
+    }
+
+    @Test("Projecting forward matches stepping there frame by frame")
+    func matchesSteppingInSmallIncrements() {
+        var stepped = GlobeCamera(longitude: 0)
+        stepped.release(velocity: 150)
+        let projected = stepped.projected(after: 2)
+
+        for _ in 0..<480 {
+            stepped.advance(by: 2.0 / 480)
+        }
+        // Closed form and fine stepping should agree to well under a degree.
+        #expect(abs(stepped.longitude - projected.longitude) < 0.5,
+                "stepped to \(stepped.longitude), projected \(projected.longitude)")
+    }
+
+    @Test("Projecting in one jump matches two shorter jumps")
+    func composesOverTime() {
+        var camera = GlobeCamera(longitude: 20)
+        camera.release(velocity: 200)
+
+        let once = camera.projected(after: 3)
+        let twice = camera.projected(after: 1).projected(after: 2)
+        #expect(abs(once.longitude - twice.longitude) < 0.001)
+        #expect(abs(once.spin - twice.spin) < 0.001)
+    }
+
+    @Test("A camera at rest still drifts")
+    func restingCameraDrifts() {
+        let camera = GlobeCamera(longitude: 0)
+        #expect(abs(camera.projected(after: 10).longitude - GlobeCamera.Motion.idleDrift * 10) < 0.001)
+    }
+}

@@ -9,6 +9,7 @@ struct GlobeMarker: View {
     let person: Person
     let date: Date
     let isSelected: Bool
+    let now: Date
 
     var body: some View {
         VStack(spacing: Layout.spacing) {
@@ -43,7 +44,7 @@ struct GlobeMarker: View {
                     .frame(width: Layout.dot, height: Layout.dot)
                     .overlay { Circle().strokeBorder(.black.opacity(Layout.dotRing), lineWidth: 1) }
             }
-            .background { StatusRipple(status: status, diameter: Layout.bubble) }
+            .background { StatusRipple(status: status, diameter: Layout.bubble, now: now) }
             .shadow(color: .black.opacity(Layout.shadowOpacity), radius: Layout.shadow)
     }
 
