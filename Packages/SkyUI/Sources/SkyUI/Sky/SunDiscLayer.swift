@@ -55,10 +55,9 @@ struct SunDiscLayer {
     /// The hour angle places the sun across the frame, elevation up it.
     private func position(in size: CGSize) -> CGPoint {
         let across = SkySnapshot.across(hourAngle: snapshot.sun.hourAngle)
-        let up = (snapshot.sun.elevation / Layout.elevationAtTop).clamped(to: 0...1)
         return CGPoint(
             x: across * size.width,
-            y: size.height * Layout.horizonFraction * (1 - up)
+            y: SkySnapshot.verticalPosition(elevation: snapshot.sun.elevation, in: size.height)
         )
     }
 }
@@ -68,8 +67,6 @@ extension SunDiscLayer {
         /// Shows a little before the sun clears the horizon, as it does.
         static let visibleAbove = -2.5
         static let fullyUpAbove = 2.0
-        static let elevationAtTop = 70.0
-        static let horizonFraction = 0.78
         static let radiusFraction = 0.062
         static let haloScale = 3.4
         static let haloOpacity = 0.5

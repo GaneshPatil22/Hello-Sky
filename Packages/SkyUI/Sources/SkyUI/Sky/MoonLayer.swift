@@ -78,10 +78,9 @@ struct MoonLayer {
     /// The hour angle places the moon across the frame, elevation up it.
     private func position(in size: CGSize, radius: Double) -> CGPoint {
         let across = SkySnapshot.across(hourAngle: snapshot.moon.hourAngle)
-        let up = (snapshot.moon.elevation / Layout.elevationAtTop).clamped(to: 0...1)
         return CGPoint(
             x: radius + across * (size.width - radius * 2),
-            y: size.height * Layout.horizonFraction * (1 - up) + radius
+            y: SkySnapshot.verticalPosition(elevation: snapshot.moon.elevation, in: size.height)
         )
     }
 }
@@ -89,9 +88,6 @@ struct MoonLayer {
 extension MoonLayer {
     private enum Layout {
         static let radiusFraction = 0.055
-        /// An elevation this high puts the moon at the top of the frame.
-        static let elevationAtTop = 70.0
-        static let horizonFraction = 0.72
         static let haloScale = 2.6
         static let haloInner = 0.7
         static let haloOpacity = 0.4

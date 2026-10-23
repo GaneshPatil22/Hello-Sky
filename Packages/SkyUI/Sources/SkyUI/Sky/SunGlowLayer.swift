@@ -31,16 +31,16 @@ struct SunGlowLayer: View {
 
     private func position(in size: CGSize) -> CGPoint {
         let across = SkySnapshot.across(hourAngle: snapshot.sun.hourAngle)
-        let up = (snapshot.sun.elevation / Layout.elevationAtTop).clamped(to: 0...1)
-        return CGPoint(x: across * size.width, y: size.height * Layout.horizonFraction * (1 - up))
+        return CGPoint(
+            x: across * size.width,
+            y: SkySnapshot.verticalPosition(elevation: snapshot.sun.elevation, in: size.height)
+        )
     }
 }
 
 extension SunGlowLayer {
     private enum Layout {
         static let radiusFraction = 0.75
-        static let elevationAtTop = 70.0
-        static let horizonFraction = 0.78
         static let highlight = SkyColor(hex: 0xFFF6E0)
         static let tintTowardsHighlight = 0.75
     }

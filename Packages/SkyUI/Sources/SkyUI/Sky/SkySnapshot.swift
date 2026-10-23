@@ -93,6 +93,18 @@ extension SkySnapshot {
         return gradient.horizon.blended(towards: Thresholds.accentWarmth, amount: lift)
     }
 
+    /// How far up the frame something sits, from its elevation.
+    ///
+    /// Stops short of the top edge rather than running to it: near the equator
+    /// the midday sun is almost overhead, and a mapping that saturates puts it
+    /// half off the screen.
+    public static func verticalPosition(elevation: Double, in height: Double) -> Double {
+        let up = (elevation / Thresholds.elevationAtTop).clamped(to: 0...1)
+        let horizon = height * Thresholds.horizonFraction
+        let ceiling = height * Thresholds.skyCeilingFraction
+        return horizon - (horizon - ceiling) * up
+    }
+
     /// Where something sits across the frame, from its hour angle.
     ///
     /// Not from azimuth: near the equator the azimuth barely moves all morning
@@ -126,6 +138,12 @@ extension SkySnapshot {
         /// Degrees of hour angle spanning the whole width, so six hours either
         /// side of noon fills the frame.
         public static let hourAngleAcrossFrame = 360.0
+        /// Straight overhead, which happens daily in the tropics.
+        public static let elevationAtTop = 90.0
+        /// Where the horizon sits in the frame.
+        public static let horizonFraction = 0.78
+        /// The highest the sun or moon is drawn, leaving room for the disc.
+        public static let skyCeilingFraction = 0.13
         /// How far a bright sky's accent is lifted towards the warm tone.
         public static let accentFloor = 0.55
         /// And how far a dark one is.

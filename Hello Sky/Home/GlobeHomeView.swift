@@ -43,7 +43,7 @@ struct GlobeHomeView: View {
                     // The reveal has to cover the whole screen, bars included,
                     // so this layer ignores the safe area and the sky screen
                     // insets its own content instead.
-                    skyLayer(for: person, in: proxy.size)
+                    skyLayer(for: person, in: proxy.size, topInset: proxy.safeAreaInsets.top)
                 }
             }
             .ignoresSafeArea()
@@ -155,9 +155,9 @@ struct GlobeHomeView: View {
         return baseCamera.projected(after: now.timeIntervalSince(baseTime))
     }
 
-    private func skyLayer(for person: Person, in size: CGSize) -> some View {
+    private func skyLayer(for person: Person, in size: CGSize, topInset: Double) -> some View {
         SkyDetailView(person: person, home: homePerson, weather: weather, time: time,
-                      settings: settings, onClose: close)
+                      settings: settings, onClose: close, topInset: topInset)
             .modifier(CircularReveal(
                 progress: revealProgress,
                 origin: revealOrigin ?? CGPoint(x: size.width / 2, y: size.height / 2),

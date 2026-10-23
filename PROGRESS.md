@@ -218,6 +218,8 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The sun and moon stop short of the top edge. In the tropics the midday sun is almost overhead, and a mapping that saturated at 70° drew it half off the screen |
+| 2026-10-23 | The sky screen takes its top inset as a parameter: the reveal has to cover the status bar, so the layer it sits in ignores the safe area and reports none of its own |
 | 2026-10-23 | The sun and moon are placed across the sky by **hour angle**, not azimuth. Near the equator the azimuth barely moves all morning and then swings through half a turn within minutes of noon, so a sun placed by it climbs and falls in a straight line |
 | 2026-10-23 | The sky screen's accent is derived from the horizon colour rather than fixed per look, so the slider, the arc and the share button drift with the sky instead of switching between two states |
 | 2026-10-23 | The header sits outside the scroll view: a back button that scrolls off the top cannot be tapped |

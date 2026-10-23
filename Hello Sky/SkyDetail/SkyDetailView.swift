@@ -18,6 +18,11 @@ struct SkyDetailView: View {
     /// Supplied when the sky is opened over the globe, so closing reverses the
     /// same move rather than dismissing a sheet.
     let onClose: (() -> Void)?
+    /// Room to leave above the header.
+    ///
+    /// Passed in because the reveal has to cover the status bar, so the layer
+    /// this sits in ignores the safe area and reports none of its own.
+    var topInset: Double = 0
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.theme) private var theme
@@ -32,7 +37,8 @@ struct SkyDetailView: View {
         weather: WeatherRepository,
         time: TimeTravel,
         settings: AppSettings,
-        onClose: (() -> Void)? = nil
+        onClose: (() -> Void)? = nil,
+        topInset: Double = 0
     ) {
         self.person = person
         self.home = home
@@ -40,6 +46,7 @@ struct SkyDetailView: View {
         self.time = time
         self.settings = settings
         self.onClose = onClose
+        self.topInset = topInset
         _model = State(wrappedValue: SkyDetailModel(place: person.place, repository: weather))
     }
 
@@ -57,7 +64,7 @@ struct SkyDetailView: View {
                 // scrolls off the top cannot be tapped.
                 header
                     .padding(.horizontal, Layout.padding)
-                    .padding(.top, Layout.topPadding)
+                    .padding(.top, Layout.topPadding + topInset)
             }
         }
         .background(backdrop)
@@ -94,7 +101,7 @@ struct SkyDetailView: View {
                 }
             SkyHeadline(person: person, home: home, date: date, weather: model.weather)
                 .padding(.horizontal, Layout.padding)
-                .padding(.top, Layout.headlineTop)
+                .padding(.top, Layout.headlineTop + topInset)
         }
         .frame(height: height)
     }

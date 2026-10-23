@@ -178,3 +178,40 @@ struct SkyPlacementTests {
                 "midday should be the brighter of the two")
     }
 }
+
+@Suite("Sky vertical placement")
+struct SkyVerticalPlacementTests {
+    private let height = 600.0
+
+    @Test("The horizon sits where the hills are")
+    func horizonPlacement() {
+        let atHorizon = SkySnapshot.verticalPosition(elevation: 0, in: height)
+        #expect(abs(atHorizon - height * 0.78) < 0.001)
+    }
+
+    @Test("Overhead stops short of the top edge")
+    func overheadStaysInFrame() {
+        // The bug this guards: Nairobi's midday sun is nearly overhead, and a
+        // mapping that saturates at the top draws it half off the screen.
+        for elevation in [70.0, 85.0, 90.0] {
+            let y = SkySnapshot.verticalPosition(elevation: elevation, in: height)
+            #expect(y > height * 0.1, "elevation \(elevation) reached \(y)")
+        }
+    }
+
+    @Test("Rising moves it up, never down")
+    func risingMovesUp() {
+        var previous = SkySnapshot.verticalPosition(elevation: 0, in: height)
+        for elevation in stride(from: 5.0, through: 90.0, by: 5.0) {
+            let y = SkySnapshot.verticalPosition(elevation: elevation, in: height)
+            #expect(y < previous, "elevation \(elevation) did not rise")
+            previous = y
+        }
+    }
+
+    @Test("Below the horizon it does not climb back up")
+    func belowHorizonIsClamped() {
+        let below = SkySnapshot.verticalPosition(elevation: -20, in: height)
+        #expect(abs(below - height * 0.78) < 0.001)
+    }
+}
