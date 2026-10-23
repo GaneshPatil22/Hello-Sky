@@ -9,10 +9,11 @@ struct TimeSlider: View {
     let reference: Person?
 
     @Environment(\.locale) private var locale
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(spacing: Layout.spacing) {
-            Button(action: time.reset) {
+            Button(action: returnToNow) {
                 Image(systemName: time.isNow ? "clock" : "arrow.uturn.backward")
                     .font(.body.weight(.semibold))
                     .frame(width: Layout.button, height: Layout.button)
@@ -34,7 +35,7 @@ struct TimeSlider: View {
                             .minimumScaleFactor(Layout.minimumScale)
                     }
                 }
-                Slider(value: $time.offsetHours,
+                Slider(value: $time.scrubbedOffset,
                        in: TimeTravel.Constants.range,
                        step: TimeTravel.Constants.step) {
                     Text("Time")
@@ -46,6 +47,15 @@ struct TimeSlider: View {
         .foregroundStyle(.white)
         .padding(Layout.padding)
         .panel(cornerRadius: Layout.corner)
+    }
+
+    /// Reduce Motion gets there at once; everyone else watches it travel.
+    private func returnToNow() {
+        if reduceMotion {
+            time.jumpToNow()
+        } else {
+            time.returnToNow()
+        }
     }
 
     private var offsetLabel: String {

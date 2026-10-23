@@ -217,6 +217,7 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | Returning the clock to now is stepped by hand over 0.85s. The globe is drawn in a `Canvas`, so SwiftUI cannot interpolate the date for us and an animation around the assignment still arrives in one jump |
 | 2026-10-23 | The globe's drift is a closed-form function of time, not state stepped each frame. Writing the camera sixty times a second re-laid out every marker and made the motion stutter |
 | 2026-10-23 | One timeline drives the Earth, the arcs and the markers together; the pulsing rings read that clock instead of running one each |
 | 2026-10-23 | The tab bar is drawn by hand. The system bar on this release is a floating capsule with a selected pill, which no styling turns into the flat bar the design calls for |
