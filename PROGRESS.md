@@ -220,7 +220,8 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-23 | A debug build seeds four sample people, not eight. The limit is ten, so the samples left room for two more and the Add button locked almost at once |
 | 2026-10-23 | When the list is full the Add control says so — "Full · 10 is the most" on the globe, a footer in the list — rather than greying out with no reason given |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
-| 2026-10-23 | The add-person form asks for the city first, because it decides the clock and suggests the name, and the keyboard moves itself on once a city is chosen |
+| 2026-10-23 | Choosing a city no longer fills in the name. A city is not a person's name, so the suggestion had to be deleted before the real one could be typed |
+| 2026-10-23 | The add-person form asks for the city first, because it decides the clock, and the keyboard moves itself on to the name once a city is chosen |
 | 2026-10-23 | City search is debounced by 250ms, and a slow result that arrives after the text has moved on is discarded |
 | 2026-10-23 | A sky shown as a tab takes a `onBack` closure; its back button had nothing to dismiss and did nothing at all |
 | 2026-10-23 | The accent takes the sky's **hue**, not its lightness, and follows whatever is lighting the place: the sky by day, the low sun at dawn and dusk, moonlight at night |

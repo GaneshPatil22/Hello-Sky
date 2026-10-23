@@ -81,7 +81,8 @@ final class AddPersonModel {
 
     func select(_ city: City) {
         selectedCity = city
-        if trimmedName.isEmpty { name = city.name }
+        // The name field is left alone: nobody is called Tokyo, and a
+        // prefilled name has to be cleared before the real one is typed.
         query = city.qualifiedName
         results = []
         hasSearched = false

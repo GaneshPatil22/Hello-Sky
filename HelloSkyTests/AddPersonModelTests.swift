@@ -90,11 +90,11 @@ struct AddPersonModelTests {
         #expect(model.results.isEmpty)
     }
 
-    @Test("Choosing a city suggests its name")
-    func cityFillsTheName() {
+    @Test("Choosing a city leaves the name alone")
+    func cityLeavesTheName() {
         let model = makeModel()
         model.select(tokyo())
-        #expect(model.name == "Tokyo")
+        #expect(model.name.isEmpty, "the city must not stand in for a person's name")
 
         let named = makeModel()
         named.name = "Kenji"

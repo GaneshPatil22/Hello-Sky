@@ -4,9 +4,8 @@ import SwiftUI
 
 /// Adds a person: find their city, name them, set their waking hours.
 ///
-/// In that order on purpose. The city is what the rest depends on — it
-/// suggests the name and decides the clock — so it is asked for first and the
-/// keyboard moves on by itself once it is chosen.
+/// In that order on purpose. The city decides the clock, so it is asked for
+/// first and the keyboard moves on to the name by itself once it is chosen.
 struct AddPersonView: View {
     let store: PeopleStore
 
