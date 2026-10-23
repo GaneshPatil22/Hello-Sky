@@ -59,7 +59,7 @@ extension HillsLayer {
     private enum Layout {
         static let seedOffset: UInt64 = 0x4111_5000
         static let ridgeCount = 2
-        static let farBaseline = 0.78
+        static let farBaseline = 0.88
         static let baselineSpread = 0.12
         static let amplitude = 0.05
         static let amplitudeFalloff = 0.4

@@ -52,11 +52,8 @@ struct SkyDetailView: View {
                 }
             }
             .scrollIndicators(.hidden)
-            // On the scroll view, not around it: an inset applied outside only
-            // shrinks the frame, leaving the slider floating over the content.
-            .safeAreaInset(edge: .bottom) { slider }
         }
-        .background(theme.sky.gradient(forSunElevation: SkyPalette.Elevation.deepNight).top.color)
+        .background(backdrop)
         .task(id: hourKey) { await model.load(at: date) }
         .gesture(dismissDownwards)
         .sheet(isPresented: $isChoosingLook) {
@@ -77,6 +74,17 @@ struct SkyDetailView: View {
             LiveSkyView(place: person.place, weather: model.weather, date: date)
                 .frame(height: height)
                 .clipped()
+                // Without this the sky ends on a hard line and the screen reads
+                // as a picture with a page stuck under it.
+                .overlay(alignment: .bottom) {
+                    LinearGradient(
+                        colors: [.clear, backdrop.opacity(Layout.fadeMid), backdrop],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: height * Layout.fadeFraction)
+                    .allowsHitTesting(false)
+                }
             VStack(spacing: Layout.headerGap) {
                 header
                 SkyHeadline(person: person, home: home, date: date, weather: model.weather)
@@ -134,6 +142,7 @@ struct SkyDetailView: View {
             if let home, home.id != person.id {
                 OverlapCard(home: home, person: person, date: date)
             }
+            TimeSlider(time: time, reference: home ?? person, style: .compact)
             SkyActionsRow(
                 card: card,
                 shareTitle: SkyCard.title(for: person),
@@ -147,12 +156,9 @@ struct SkyDetailView: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(Layout.padding)
-    }
-
-    private var slider: some View {
-        TimeSlider(time: time, reference: home ?? person)
-            .padding(.horizontal, Layout.padding)
-            .padding(.bottom, Layout.padding)
+        // Explicit rather than relying on the tab bar's safe-area inset, which
+        // does not reach a scroll view nested inside a geometry reader.
+        .padding(.bottom, Layout.bottomClearance)
     }
 
     // MARK: - Actions
@@ -175,6 +181,11 @@ struct SkyDetailView: View {
     }
 
     // MARK: - Derived
+
+    /// The page's own colour, which the sky fades into.
+    private var backdrop: Color {
+        theme.sky.gradient(forSunElevation: SkyPalette.Elevation.deepNight).top.color
+    }
 
     private var date: Date { time.date() }
 
@@ -232,7 +243,11 @@ struct SkyDetailView: View {
 
 extension SkyDetailView {
     private enum Layout {
-        static let skyFraction = 0.60
+        static let skyFraction = 0.58
+        /// How much of the sky's height the fade covers.
+        static let fadeFraction = 0.24
+        static let fadeMid = 0.75
+        static let bottomClearance: Double = 72
         static let padding: Double = 18
         static let topPadding: Double = 8
         static let headerGap: Double = 22

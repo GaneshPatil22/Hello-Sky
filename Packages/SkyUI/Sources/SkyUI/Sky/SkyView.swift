@@ -24,6 +24,9 @@ public struct SkyView: View {
                 var context = context
                 StarsLayer(snapshot: snapshot).draw(in: &context, size: size, motion: motion)
                 MoonLayer(snapshot: snapshot).draw(in: &context, size: size)
+                // The sun sits behind the clouds, so cloud passing in front of
+                // it dims it the way it should.
+                SunDiscLayer(snapshot: snapshot).draw(in: &context, size: size)
                 CloudsLayer(snapshot: snapshot).draw(in: &context, size: size, motion: motion)
                 RainLayer(snapshot: snapshot).draw(in: &context, size: size, motion: motion)
                 HillsLayer(snapshot: snapshot).draw(in: &context, size: size)

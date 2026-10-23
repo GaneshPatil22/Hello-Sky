@@ -1,3 +1,4 @@
+import SkyUI
 import SwiftUI
 
 /// Two days side by side, with the hours they share picked out.
@@ -6,6 +7,8 @@ struct OverlapBars: View {
     let personName: String
     let homeSlots: [Bool]
     let personSlots: [Bool]
+
+    @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(alignment: .center, spacing: Layout.labelGap) {
@@ -51,9 +54,12 @@ struct OverlapBars: View {
             GeometryReader { proxy in
                 let width = proxy.size.width / Double(max(shared.count, 1))
                 RoundedRectangle(cornerRadius: Layout.highlightCorner)
-                    .strokeBorder(.white.opacity(Layout.highlightOpacity), lineWidth: Layout.highlightWidth)
+                    .strokeBorder(theme.accent.color.opacity(Layout.highlightOpacity),
+                                  lineWidth: Layout.highlightWidth)
                     .frame(width: width * Double(best.count))
                     .offset(x: width * Double(best.lowerBound))
+                    .shadow(color: theme.accent.color.opacity(Layout.highlightGlow),
+                            radius: Layout.highlightGlowRadius)
             }
         }
     }
@@ -86,5 +92,7 @@ extension OverlapBars {
         static let highlightOpacity = 0.9
         static let highlightWidth: Double = 1.5
         static let highlightCorner: Double = 7
+        static let highlightGlow = 0.45
+        static let highlightGlowRadius: Double = 6
     }
 }

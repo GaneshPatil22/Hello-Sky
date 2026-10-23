@@ -218,6 +218,9 @@ Phases 0 and 1 come first. Phases 2–5 can then run in any order or in parallel
 | 2026-10-22 | Packages use swift-tools-version 6.4 — required for the `.iOS(.v27)` platform value |
 | 2026-10-22 | `SkyUI` and `Globe` default to `MainActor` isolation; `SkyCore` and `SkyData` stay nonisolated |
 | 2026-10-23 | The night region is derived as `a < −sz·√(1−b²)` in sun-aligned screen coordinates and checked pixel by pixel against the real light, after a hand-built ellipse put the shadow over the wrong countries |
+| 2026-10-23 | The sky fades into the page rather than ending on a line, so the screen reads as one surface instead of a picture with a page under it |
+| 2026-10-23 | The sun is drawn as a disc with a corona, not only as a wash: a sunrise with no visible sun reads as coloured fog |
+| 2026-10-23 | The time slider moved into the scrolling content, between the overlap card and the actions, in a compact row |
 | 2026-10-23 | Sunrise and sunset reminders are local notifications, which need no paid account, so one can be set by hand from a sky before Phase 7 builds the rolling schedule |
 | 2026-10-23 | At night the sun waits at the start of its arc when a sunrise is next, so the card reads as the day ahead rather than one just finished |
 | 2026-10-23 | The share card is a `Transferable` rather than an `Image`, so the render happens when someone shares rather than on every frame of a screen that redraws constantly |

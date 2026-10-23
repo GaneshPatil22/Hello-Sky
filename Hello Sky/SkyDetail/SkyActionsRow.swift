@@ -1,4 +1,5 @@
 import SkyCore
+import SkyUI
 import SwiftUI
 
 /// The two things you can do from someone's sky.
@@ -9,6 +10,8 @@ struct SkyActionsRow: View {
     let isReminderSet: Bool
     let onRemind: () -> Void
 
+    @Environment(\.theme) private var theme
+
     var body: some View {
         HStack(spacing: Layout.spacing) {
             ShareLink(item: card, preview: SharePreview(shareTitle)) {
@@ -18,7 +21,7 @@ struct SkyActionsRow: View {
                     .padding(.vertical, Layout.padding)
             }
             .foregroundStyle(.black)
-            .background(.white.opacity(Layout.filledOpacity), in: .rect(cornerRadius: Layout.corner))
+            .background(theme.accent.color.opacity(Layout.filledOpacity), in: .rect(cornerRadius: Layout.corner))
 
             Button(action: onRemind) {
                 Label(reminderTitle, systemImage: isReminderSet ? "bell.fill" : "bell")

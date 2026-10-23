@@ -4,14 +4,51 @@ import SwiftUI
 /// The card that says which moment the whole screen is showing, and lets you
 /// move it.
 struct TimeSlider: View {
+    /// How much room the slider is given.
+    enum Style {
+        /// A card with the moment spelled out, for the globe.
+        case card
+        /// A single row, for a screen that already says where and when it is.
+        case compact
+    }
+
     @Bindable var time: TimeTravel
     /// Whose clock the caption reads from, normally home.
     let reference: Person?
+    var style: Style = .card
 
     @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
+        switch style {
+        case .card: card
+        case .compact: compact
+        }
+    }
+
+    /// Offset on the left, slider filling the rest.
+    private var compact: some View {
+        HStack(spacing: Layout.spacing) {
+            Text(offsetLabel)
+                .font(.subheadline.weight(.semibold))
+                .monospacedDigit()
+                .frame(width: Layout.compactLabel, alignment: .leading)
+            Slider(value: $time.scrubbedOffset,
+                   in: TimeTravel.Constants.range,
+                   step: TimeTravel.Constants.step) {
+                Text("Time")
+            }
+            .tint(.white.opacity(Layout.sliderTint))
+            .accessibilityValue(caption ?? offsetLabel)
+        }
+        .foregroundStyle(.white)
+        .padding(.horizontal, Layout.padding)
+        .padding(.vertical, Layout.compactPadding)
+        .panel(cornerRadius: Layout.corner)
+    }
+
+    private var card: some View {
         HStack(spacing: Layout.spacing) {
             Button(action: returnToNow) {
                 Image(systemName: time.isNow ? "clock" : "arrow.uturn.backward")
@@ -49,6 +86,18 @@ struct TimeSlider: View {
         .panel(cornerRadius: Layout.corner)
     }
 
+    /// "+19h 15m", so a glance says how far from now this is.
+    private var offsetLabel: String {
+        guard !time.isNow else { return "Now" }
+        let minutes = Int((abs(time.offsetHours) * 60).rounded())
+        let sign = time.offsetHours > 0 ? "+" : "\u{2212}"
+        let hours = minutes / 60
+        let remainder = minutes % 60
+
+        if hours == 0 { return "\(sign)\(remainder)m" }
+        return remainder == 0 ? "\(sign)\(hours)h" : "\(sign)\(hours)h \(remainder)m"
+    }
+
     /// Reduce Motion gets there at once; everyone else watches it travel.
     private func returnToNow() {
         if reduceMotion {
@@ -56,13 +105,6 @@ struct TimeSlider: View {
         } else {
             time.returnToNow()
         }
-    }
-
-    private var offsetLabel: String {
-        guard !time.isNow else { return "Now" }
-        let hours = Int(time.offsetHours.rounded())
-        guard hours != 0 else { return "Now" }
-        return hours > 0 ? "+\(hours) h" : "\(hours) h"
     }
 
     /// "Thu 7:35 PM in London", so the moment is never ambiguous.
@@ -86,5 +128,7 @@ extension TimeSlider {
         static let buttonFill = 0.12
         static let sliderTint = 0.9
         static let minimumScale = 0.8
+        static let compactLabel: Double = 74
+        static let compactPadding: Double = 10
     }
 }

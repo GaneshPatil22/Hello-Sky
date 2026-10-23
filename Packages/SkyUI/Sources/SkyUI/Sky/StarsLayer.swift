@@ -35,11 +35,11 @@ struct StarsLayer {
 
 extension StarsLayer {
     private enum Layout {
-        static let count = 220
+        static let count = 420
         /// Stars fill the top four-fifths; below that is horizon.
         static let skyFraction = 0.8
-        static let brightnessRange: ClosedRange<Double> = 0.25...1.0
-        static let radiusRange: ClosedRange<Double> = 0.4...1.3
+        static let brightnessRange: ClosedRange<Double> = 0.3...1.0
+        static let radiusRange: ClosedRange<Double> = 0.5...1.6
         /// How much a star dims and brightens, as a fraction of its brightness.
         static let twinkleDepth = 0.25
         static let twinkleSpeed = 0.7

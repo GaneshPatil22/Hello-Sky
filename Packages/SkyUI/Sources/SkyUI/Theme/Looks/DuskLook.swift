@@ -42,7 +42,7 @@ extension Theme {
             graticule: SkyColor(hex: 0xFFD9E6),
             arcTint: SkyColor(hex: 0xFFCB7A)
         ),
-        accent: SkyColor(hex: 0xFF7A9C),
+        accent: SkyColor(hex: 0xFFB38A),
         starTint: SkyColor(hex: 0xFFE2EC),
         alternateIconName: "AppIcon-Dusk"
     )

@@ -26,7 +26,8 @@ struct HomeView: View {
                     .transition(.opacity)
             }
         }
-        .ignoresSafeArea(edges: .bottom)
+        // The bar is not pushed under the home indicator: letting it sit above
+        // is what makes a plain height inset enough to keep content clear of it.
         // The look applies to every screen at once, which is what makes it a
         // look rather than a per-screen setting.
         .theme(registry.theme(storedID: settings.themeID))

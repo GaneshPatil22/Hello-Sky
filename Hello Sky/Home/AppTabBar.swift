@@ -56,7 +56,7 @@ extension AppTabBar {
         static let resting = 0.45
         static let hairline = 0.08
         static let hairlineWidth: Double = 1
-        static let fill = 0.55
-        static let material = 0.7
+        static let fill = 0.86
+        static let material = 0.9
     }
 }

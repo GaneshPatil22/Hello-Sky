@@ -43,7 +43,7 @@ extension Theme {
             graticule: SkyColor(hex: 0xFFFFFF),
             arcTint: SkyColor(hex: 0xFFC861)
         ),
-        accent: SkyColor(hex: 0x4F93F5),
+        accent: SkyColor(hex: 0xE3CFAC),
         starTint: SkyColor(hex: 0xFFFFFF),
         alternateIconName: nil
     )

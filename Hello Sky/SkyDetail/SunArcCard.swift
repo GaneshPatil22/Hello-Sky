@@ -1,4 +1,5 @@
 import SkyCore
+import SkyUI
 import SwiftUI
 
 /// Where the sun has got to, and how long until it next crosses the horizon.
@@ -7,6 +8,7 @@ struct SunArcCard: View {
     let date: Date
 
     @Environment(\.locale) private var locale
+    @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(spacing: Layout.spacing) {
@@ -45,7 +47,7 @@ struct SunArcCard: View {
                             style: StrokeStyle(lineWidth: Layout.line, dash: Layout.dash))
                 SunArcShape(portion: progress)
                     .path(in: rect)
-                    .stroke(.white.opacity(Layout.pastOpacity), lineWidth: Layout.line)
+                    .stroke(theme.accent.color.opacity(Layout.pastOpacity), lineWidth: Layout.line)
 
                 Path { path in
                     path.move(to: CGPoint(x: 0, y: rect.maxY))
@@ -57,7 +59,7 @@ struct SunArcCard: View {
                 Circle()
                     .fill(.white)
                     .frame(width: Layout.sun, height: Layout.sun)
-                    .shadow(color: .white.opacity(Layout.glowOpacity), radius: Layout.glow)
+                    .shadow(color: theme.accent.color.opacity(Layout.glowOpacity), radius: Layout.glow)
                     .position(sun)
             }
         }
