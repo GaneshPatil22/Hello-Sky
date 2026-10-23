@@ -7,8 +7,7 @@ struct OverlapBars: View {
     let personName: String
     let homeSlots: [Bool]
     let personSlots: [Bool]
-
-    @Environment(\.theme) private var theme
+    let accent: Color
 
     var body: some View {
         HStack(alignment: .center, spacing: Layout.labelGap) {
@@ -54,11 +53,11 @@ struct OverlapBars: View {
             GeometryReader { proxy in
                 let width = proxy.size.width / Double(max(shared.count, 1))
                 RoundedRectangle(cornerRadius: Layout.highlightCorner)
-                    .strokeBorder(theme.accent.color.opacity(Layout.highlightOpacity),
+                    .strokeBorder(accent.opacity(Layout.highlightOpacity),
                                   lineWidth: Layout.highlightWidth)
                     .frame(width: width * Double(best.count))
                     .offset(x: width * Double(best.lowerBound))
-                    .shadow(color: theme.accent.color.opacity(Layout.highlightGlow),
+                    .shadow(color: accent.opacity(Layout.highlightGlow),
                             radius: Layout.highlightGlowRadius)
             }
         }

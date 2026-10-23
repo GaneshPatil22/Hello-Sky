@@ -103,3 +103,78 @@ struct SkySnapshotTests {
         }
     }
 }
+
+@Suite("Sky placement and accent")
+struct SkyPlacementTests {
+    private let london = PersonFixtures.you.place
+    private let nairobi = PersonFixtures.amara.place
+    private func date(_ iso: String) -> Date { try! Date(iso, strategy: .iso8601) }
+
+    @Test("Noon puts the sun in the middle, morning left, evening right")
+    func hourAngleSweeps() {
+        #expect(abs(SkySnapshot.across(hourAngle: 0) - 0.5) < 0.001)
+        #expect(SkySnapshot.across(hourAngle: -90) < 0.3)
+        #expect(SkySnapshot.across(hourAngle: 90) > 0.7)
+    }
+
+    @Test("Placement stays inside the frame at every hour angle")
+    func placementIsBounded() {
+        for angle in stride(from: -180.0, through: 180.0, by: 10.0) {
+            let across = SkySnapshot.across(hourAngle: angle)
+            #expect(across >= 0 && across <= 1, "\(angle) gave \(across)")
+        }
+    }
+
+    @Test("The sun traces an arc near the equator, not a vertical line")
+    func equatorialSunArcs() {
+        // Nairobi is the case azimuth got wrong: it barely moves all morning
+        // and then swings through half a turn within minutes of noon.
+        var positions: [Double] = []
+        for hour in stride(from: 3.0, through: 15.0, by: 1.0) {
+            let moment = date("2026-10-23T00:00:00Z").addingTimeInterval(hour * 3_600)
+            let snapshot = SkySnapshot(place: nairobi, date: moment,
+                                       weather: SkyWeather.Samples.clear(at: moment), theme: .realistic)
+            positions.append(SkySnapshot.across(hourAngle: snapshot.sun.hourAngle))
+        }
+        // Strictly left to right, with no jump bigger than a sensible step.
+        for (earlier, later) in zip(positions, positions.dropFirst()) {
+            #expect(later > earlier, "the sun went backwards")
+            #expect(later - earlier < 0.1, "the sun jumped from \(earlier) to \(later)")
+        }
+        #expect(positions.last! - positions.first! > 0.3, "the sun barely moved across")
+    }
+
+    @Test("The accent follows the sky instead of jumping between two colours")
+    func accentIsGradual() {
+        var accents: [SkyColor] = []
+        for hour in stride(from: 0.0, through: 23.0, by: 1.0) {
+            let moment = date("2026-10-23T00:00:00Z").addingTimeInterval(hour * 3_600)
+            let snapshot = SkySnapshot(place: london, date: moment,
+                                       weather: SkyWeather.Samples.clear(at: moment), theme: .realistic)
+            accents.append(snapshot.accent)
+        }
+        #expect(Set(accents).count > 12, "the accent only took \(Set(accents).count) values across a day")
+
+        for (earlier, later) in zip(accents, accents.dropFirst()) {
+            let step = max(abs(later.red - earlier.red),
+                           abs(later.green - earlier.green),
+                           abs(later.blue - earlier.blue))
+            #expect(step < 0.2, "the accent jumped by \(step) in an hour")
+        }
+    }
+
+    @Test("A night sky gets a warm accent, a day sky a pale one")
+    func accentWarmsAtNight() {
+        func accent(atHour hour: Double) -> SkyColor {
+            let moment = date("2026-06-21T00:00:00Z").addingTimeInterval(hour * 3_600)
+            return SkySnapshot(place: london, date: moment,
+                               weather: SkyWeather.Samples.clear(at: moment), theme: .realistic).accent
+        }
+        let night = accent(atHour: 1)
+        let midday = accent(atHour: 12)
+
+        #expect(night.red > night.blue, "night should lean warm")
+        #expect(midday.red + midday.green + midday.blue > night.red + night.green + night.blue,
+                "midday should be the brighter of the two")
+    }
+}

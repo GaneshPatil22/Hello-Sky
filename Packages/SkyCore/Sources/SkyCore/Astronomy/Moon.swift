@@ -20,8 +20,10 @@ public enum Moon {
 
         // The moon trails the sun across the sky by its phase: new moon rises
         // with the sun, full moon opposes it.
-        let hourAngle = Angle.radians(fromDegrees: coordinate.longitude - subsolar.longitude)
-            - phase.fraction * 2 * .pi
+        let hourAngleDegrees = Angle.signedDegrees(
+            coordinate.longitude - subsolar.longitude - phase.fraction * 360
+        )
+        let hourAngle = Angle.radians(fromDegrees: hourAngleDegrees)
         // Declination swings through the ecliptic tilt over a tropical month.
         let declination = Angle.radians(fromDegrees: Series.maximumDeclination)
             * sin(2 * .pi * daysSinceReferenceNewMoon / Series.tropicalMonth)
@@ -37,7 +39,8 @@ public enum Moon {
 
         return MoonPosition(
             elevation: Angle.degrees(fromRadians: elevation),
-            azimuth: Angle.normalizedDegrees(Angle.degrees(fromRadians: azimuthFromSouth) + Angle.halfTurn)
+            azimuth: Angle.normalizedDegrees(Angle.degrees(fromRadians: azimuthFromSouth) + Angle.halfTurn),
+            hourAngle: hourAngleDegrees
         )
     }
 }

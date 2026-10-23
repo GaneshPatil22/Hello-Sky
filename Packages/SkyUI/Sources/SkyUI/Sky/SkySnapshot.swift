@@ -79,6 +79,31 @@ extension SkySnapshot {
         return height * (1 - cloud * Thresholds.cloudDimsGlow)
     }
 
+    /// The colour the screen's controls take from the sky.
+    ///
+    /// Derived from the horizon rather than fixed per look, so the slider, the
+    /// sun's arc and the share button drift with the sky as the time slider
+    /// moves instead of switching between two states. A dark sky is lifted
+    /// further towards the warm tone, which is what turns a navy midnight into
+    /// a tan accent while leaving a pale midday almost white.
+    public var accent: SkyColor {
+        let brightness = (gradient.horizon.red + gradient.horizon.green + gradient.horizon.blue) / 3
+        let lift = Thresholds.accentFloor
+            + (Thresholds.accentCeiling - Thresholds.accentFloor) * (1 - brightness)
+        return gradient.horizon.blended(towards: Thresholds.accentWarmth, amount: lift)
+    }
+
+    /// Where something sits across the frame, from its hour angle.
+    ///
+    /// Not from azimuth: near the equator the azimuth barely moves all morning
+    /// and then swings through half a turn within minutes of noon, so a sun
+    /// placed by it appears to climb and fall in a straight line. The hour
+    /// angle advances evenly with the clock at every latitude, which is what
+    /// traces an arc.
+    public static func across(hourAngle: Double) -> Double {
+        (0.5 + hourAngle / Thresholds.hourAngleAcrossFrame).clamped(to: 0...1)
+    }
+
     /// 0 at `from`, 1 at `to`, linear between, whichever direction they run.
     static func ramp(_ value: Double, from: Double, to: Double) -> Double {
         guard from != to else { return value >= to ? 1 : 0 }
@@ -98,6 +123,14 @@ extension SkySnapshot {
         public static let moonInDaylight = 0.35
         /// The sun elevation by which the moon is at its palest.
         public static let moonFaintestAbove = 15.0
+        /// Degrees of hour angle spanning the whole width, so six hours either
+        /// side of noon fills the frame.
+        public static let hourAngleAcrossFrame = 360.0
+        /// How far a bright sky's accent is lifted towards the warm tone.
+        public static let accentFloor = 0.55
+        /// And how far a dark one is.
+        public static let accentCeiling = 0.95
+        public static let accentWarmth = SkyColor(hex: 0xE6D4B4)
         /// By this height the halo has gone.
         public static let glowFullyFadedAbove = 25.0
     }

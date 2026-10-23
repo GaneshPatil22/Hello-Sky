@@ -75,9 +75,9 @@ struct MoonLayer {
         }
     }
 
-    /// Azimuth places the moon across the frame, elevation up it.
+    /// The hour angle places the moon across the frame, elevation up it.
     private func position(in size: CGSize, radius: Double) -> CGPoint {
-        let across = (snapshot.moon.azimuth / 360).clamped(to: 0...1)
+        let across = SkySnapshot.across(hourAngle: snapshot.moon.hourAngle)
         let up = (snapshot.moon.elevation / Layout.elevationAtTop).clamped(to: 0...1)
         return CGPoint(
             x: radius + across * (size.width - radius * 2),

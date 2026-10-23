@@ -30,7 +30,7 @@ struct SunGlowLayer: View {
     }
 
     private func position(in size: CGSize) -> CGPoint {
-        let across = (snapshot.sun.azimuth / 360).clamped(to: 0...1)
+        let across = SkySnapshot.across(hourAngle: snapshot.sun.hourAngle)
         let up = (snapshot.sun.elevation / Layout.elevationAtTop).clamped(to: 0...1)
         return CGPoint(x: across * size.width, y: size.height * Layout.horizonFraction * (1 - up))
     }

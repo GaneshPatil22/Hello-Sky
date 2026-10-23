@@ -9,6 +9,7 @@ struct OverlapCard: View {
     let home: Person
     let person: Person
     let date: Date
+    let accent: Color
 
     @Environment(\.locale) private var locale
 
@@ -27,7 +28,8 @@ struct OverlapCard: View {
                 homeName: home.name,
                 personName: person.name,
                 homeSlots: homeSlots,
-                personSlots: personSlots
+                personSlots: personSlots,
+                accent: accent
             )
 
             axis

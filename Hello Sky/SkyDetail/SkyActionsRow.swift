@@ -9,8 +9,7 @@ struct SkyActionsRow: View {
     let reminderTitle: String
     let isReminderSet: Bool
     let onRemind: () -> Void
-
-    @Environment(\.theme) private var theme
+    let accent: Color
 
     var body: some View {
         HStack(spacing: Layout.spacing) {
@@ -21,7 +20,7 @@ struct SkyActionsRow: View {
                     .padding(.vertical, Layout.padding)
             }
             .foregroundStyle(.black)
-            .background(theme.accent.color.opacity(Layout.filledOpacity), in: .rect(cornerRadius: Layout.corner))
+            .background(accent.opacity(Layout.filledOpacity), in: .rect(cornerRadius: Layout.corner))
 
             Button(action: onRemind) {
                 Label(reminderTitle, systemImage: isReminderSet ? "bell.fill" : "bell")

@@ -6,9 +6,10 @@ import SwiftUI
 struct SunArcCard: View {
     let person: Person
     let date: Date
+    /// Taken from the sky being shown, so it drifts with the time slider.
+    let accent: Color
 
     @Environment(\.locale) private var locale
-    @Environment(\.theme) private var theme
 
     var body: some View {
         HStack(spacing: Layout.spacing) {
@@ -47,7 +48,7 @@ struct SunArcCard: View {
                             style: StrokeStyle(lineWidth: Layout.line, dash: Layout.dash))
                 SunArcShape(portion: progress)
                     .path(in: rect)
-                    .stroke(theme.accent.color.opacity(Layout.pastOpacity), lineWidth: Layout.line)
+                    .stroke(accent.opacity(Layout.pastOpacity), lineWidth: Layout.line)
 
                 Path { path in
                     path.move(to: CGPoint(x: 0, y: rect.maxY))
@@ -59,7 +60,7 @@ struct SunArcCard: View {
                 Circle()
                     .fill(.white)
                     .frame(width: Layout.sun, height: Layout.sun)
-                    .shadow(color: theme.accent.color.opacity(Layout.glowOpacity), radius: Layout.glow)
+                    .shadow(color: accent.opacity(Layout.glowOpacity), radius: Layout.glow)
                     .position(sun)
             }
         }

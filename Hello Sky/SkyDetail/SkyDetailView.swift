@@ -45,13 +45,20 @@ struct SkyDetailView: View {
 
     var body: some View {
         GeometryReader { proxy in
-            ScrollView {
-                VStack(spacing: 0) {
-                    sky(height: proxy.size.height * Layout.skyFraction)
-                    details
+            ZStack(alignment: .top) {
+                ScrollView {
+                    VStack(spacing: 0) {
+                        sky(height: proxy.size.height * Layout.skyFraction)
+                        details
+                    }
                 }
+                .scrollIndicators(.hidden)
+                // Outside the scroll view on purpose: a back button that
+                // scrolls off the top cannot be tapped.
+                header
+                    .padding(.horizontal, Layout.padding)
+                    .padding(.top, Layout.topPadding)
             }
-            .scrollIndicators(.hidden)
         }
         .background(backdrop)
         .task(id: hourKey) { await model.load(at: date) }
@@ -85,12 +92,9 @@ struct SkyDetailView: View {
                     .frame(height: height * Layout.fadeFraction)
                     .allowsHitTesting(false)
                 }
-            VStack(spacing: Layout.headerGap) {
-                header
-                SkyHeadline(person: person, home: home, date: date, weather: model.weather)
-            }
-            .padding(.horizontal, Layout.padding)
-            .padding(.top, Layout.topPadding)
+            SkyHeadline(person: person, home: home, date: date, weather: model.weather)
+                .padding(.horizontal, Layout.padding)
+                .padding(.top, Layout.headlineTop)
         }
         .frame(height: height)
     }
@@ -138,17 +142,18 @@ struct SkyDetailView: View {
 
     private var details: some View {
         VStack(spacing: Layout.cardGap) {
-            SunArcCard(person: person, date: date)
+            SunArcCard(person: person, date: date, accent: accent)
             if let home, home.id != person.id {
-                OverlapCard(home: home, person: person, date: date)
+                OverlapCard(home: home, person: person, date: date, accent: accent)
             }
-            TimeSlider(time: time, reference: home ?? person, style: .compact)
+            TimeSlider(time: time, reference: home ?? person, style: .compact, accent: accent)
             SkyActionsRow(
                 card: card,
                 shareTitle: SkyCard.title(for: person),
                 reminderTitle: reminderButtonTitle,
                 isReminderSet: isReminderSet,
-                onRemind: scheduleReminder
+                onRemind: scheduleReminder,
+                accent: accent
             )
             Text(model.attribution.text)
                 .font(.caption2)
@@ -159,6 +164,7 @@ struct SkyDetailView: View {
         // Explicit rather than relying on the tab bar's safe-area inset, which
         // does not reach a scroll view nested inside a geometry reader.
         .padding(.bottom, Layout.bottomClearance)
+        .animation(.easeInOut(duration: Layout.accentFade), value: accent)
     }
 
     // MARK: - Actions
@@ -181,6 +187,12 @@ struct SkyDetailView: View {
     }
 
     // MARK: - Derived
+
+    /// The colour the sky lends its controls, which drifts as time moves.
+    private var accent: Color {
+        SkySnapshot(place: person.place, date: date, weather: model.weather, theme: theme)
+            .accent.color
+    }
 
     /// The page's own colour, which the sky fades into.
     private var backdrop: Color {
@@ -247,10 +259,12 @@ extension SkyDetailView {
         /// How much of the sky's height the fade covers.
         static let fadeFraction = 0.24
         static let fadeMid = 0.75
-        static let bottomClearance: Double = 72
+        static let bottomClearance: Double = 8
+        static let accentFade = 0.3
         static let padding: Double = 18
         static let topPadding: Double = 8
-        static let headerGap: Double = 22
+        /// Room for the pinned header above the clock.
+        static let headlineTop: Double = 78
         static let titleGap: Double = 2
         static let cardGap: Double = 12
         static let button: Double = 40

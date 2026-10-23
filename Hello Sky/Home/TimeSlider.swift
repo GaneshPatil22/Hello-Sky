@@ -16,6 +16,9 @@ struct TimeSlider: View {
     /// Whose clock the caption reads from, normally home.
     let reference: Person?
     var style: Style = .card
+    /// Overrides the look's own tint, so the sky screen's slider matches the
+    /// sky it is sitting on.
+    var accent: Color?
 
     @Environment(\.locale) private var locale
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -39,7 +42,7 @@ struct TimeSlider: View {
                    step: TimeTravel.Constants.step) {
                 Text("Time")
             }
-            .tint(.white.opacity(Layout.sliderTint))
+            .tint(accent ?? .white.opacity(Layout.sliderTint))
             .accessibilityValue(caption ?? offsetLabel)
         }
         .foregroundStyle(.white)
@@ -77,7 +80,7 @@ struct TimeSlider: View {
                        step: TimeTravel.Constants.step) {
                     Text("Time")
                 }
-                .tint(.white.opacity(Layout.sliderTint))
+                .tint(accent ?? .white.opacity(Layout.sliderTint))
                 .accessibilityValue(caption ?? offsetLabel)
             }
         }

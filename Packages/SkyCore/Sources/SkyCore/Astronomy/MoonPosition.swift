@@ -10,6 +10,11 @@ public struct MoonPosition: Hashable, Sendable {
     public let elevation: Double
     /// Degrees clockwise from true north.
     public let azimuth: Double
+    /// Degrees west of the observer's meridian, within `-180..<180`.
+    ///
+    /// Unlike azimuth, this advances evenly with the clock at every latitude,
+    /// which is what makes it the right thing to place a drawing by.
+    public let hourAngle: Double
 
     public var isVisible: Bool {
         elevation > 0
